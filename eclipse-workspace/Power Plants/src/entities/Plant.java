@@ -1,6 +1,7 @@
 package entities;
 
 import java.util.Date;
+import java.util.List;
 
 public class Plant {
 	
@@ -8,13 +9,14 @@ public class Plant {
 	private double avgProduction;
 	private double maxProduction;
 	private Date startedWorkingDate;
+	private List<Delivery> deliveries;
 	
-	public Plant(String name, double avgProduction, double maxProduction, Date startedWorkingDate) {
-		super();
+	public Plant(String name, double avgProduction, double maxProduction, Date startedWorkingDate, List<Delivery> deliveries) {
 		this.name = name;
 		this.avgProduction = avgProduction;
 		this.maxProduction = maxProduction;
 		this.startedWorkingDate = startedWorkingDate;
+		this.deliveries = deliveries;
 	}
 
 	public String getName() {
@@ -49,10 +51,18 @@ public class Plant {
 		this.startedWorkingDate = startedWorkingDate;
 	}
 
+	public List<Delivery> getDeliveries() {
+		return deliveries;
+	}
+
+	public void setDeliveries(List<Delivery> deliveries) {
+		this.deliveries = deliveries;
+	}
+
 	@Override
 	public String toString() {
 		return "Plant [name=" + name + ", avgProduction=" + avgProduction + ", maxProduction=" + maxProduction
-				+ ", startedWorkingDate=" + startedWorkingDate + "]";
+				+ ", startedWorkingDate=" + startedWorkingDate + ", deliveries=" + deliveries + "]";
 	}
 	
 }
