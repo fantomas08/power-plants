@@ -6,14 +6,14 @@ public class HydraulicPlant extends Plant {
 	
 	private double maxCapacity;
 	private double occupation;
-	private int numberOfTurbines;
+	private int numTurbines;
 	
-	public HydraulicPlant(String name, double averageProduction, double maxProduction, Date startedWorkingDate, 
-			double maxCapacity, double occupation, int numberOfTurbines) {
-		super(name, averageProduction, maxProduction, startedWorkingDate);
+	public HydraulicPlant(String name, double avgProduction, double maxProduction, Date startedWorkingDate,
+			double maxCapacity, double occupation, int numTurbines) {
+		super(name, avgProduction, maxProduction, startedWorkingDate);
 		this.maxCapacity = maxCapacity;
 		this.occupation = occupation;
-		this.numberOfTurbines = numberOfTurbines;
+		this.numTurbines = numTurbines;
 	}
 
 	public double getMaxCapacity() {
@@ -32,18 +32,18 @@ public class HydraulicPlant extends Plant {
 		this.occupation = occupation;
 	}
 
-	public int getNumberOfTurbines() {
-		return numberOfTurbines;
+	public int getNumTurbines() {
+		return numTurbines;
 	}
 
-	public void setNumberOfTurbines(int numberOfTurbines) {
-		this.numberOfTurbines = numberOfTurbines;
+	public void setNumTurbines(int numTurbines) {
+		this.numTurbines = numTurbines;
 	}
 
 	@Override
 	public String toString() {
-		return "HydraulicPlant [maxCapacity=" + maxCapacity + ", occupation=" + occupation + ", numberOfTurbines="
-				+ numberOfTurbines + "]";
+		return "HydraulicPlant [maxCapacity=" + maxCapacity + ", occupation=" + occupation + ", numTurbines="
+				+ numTurbines + "]";
 	}
-
+	
 }

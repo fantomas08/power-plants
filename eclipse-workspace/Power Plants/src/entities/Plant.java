@@ -5,13 +5,14 @@ import java.util.Date;
 public class Plant {
 	
 	private String name;
-	private double averageProduction;
+	private double avgProduction;
 	private double maxProduction;
 	private Date startedWorkingDate;
 	
-	public Plant(String name, double averageProduction, double maxProduction, Date startedWorkingDate) {
+	public Plant(String name, double avgProduction, double maxProduction, Date startedWorkingDate) {
+		super();
 		this.name = name;
-		this.averageProduction = averageProduction;
+		this.avgProduction = avgProduction;
 		this.maxProduction = maxProduction;
 		this.startedWorkingDate = startedWorkingDate;
 	}
@@ -24,12 +25,12 @@ public class Plant {
 		this.name = name;
 	}
 
-	public double getAverageProduction() {
-		return averageProduction;
+	public double getAvgProduction() {
+		return avgProduction;
 	}
 
-	public void setAverageProduction(double averageProduction) {
-		this.averageProduction = averageProduction;
+	public void setAvgProduction(double avgProduction) {
+		this.avgProduction = avgProduction;
 	}
 
 	public double getMaxProduction() {
@@ -50,7 +51,7 @@ public class Plant {
 
 	@Override
 	public String toString() {
-		return "Plant [name=" + name + ", averageProduction=" + averageProduction + ", maxProduction=" + maxProduction
+		return "Plant [name=" + name + ", avgProduction=" + avgProduction + ", maxProduction=" + maxProduction
 				+ ", startedWorkingDate=" + startedWorkingDate + "]";
 	}
 	
