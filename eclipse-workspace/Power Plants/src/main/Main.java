@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.neodatis.odb.*;
 
+import control.Control;
+import control.PlantControl;
 import entities.Delivery;
 import entities.NuclearPlant;
 import entities.Plant;
@@ -18,11 +20,15 @@ public class Main {
 				100, 150, "25-11-1998", new ArrayList<Delivery>(),
 				4, 50, 3);
 		
-		ODB odb = ODBFactory.open(ODB_NAME);
-		
 		//odb.store(plant);
-		odb.close();
+		PlantControl pc = new PlantControl();
+		pc.printPlants();
 		
+		PlantControl pc2 = new PlantControl();
+		pc2.printPlants();
+		
+		
+		Control.odb.close();
 	}
 
 }
