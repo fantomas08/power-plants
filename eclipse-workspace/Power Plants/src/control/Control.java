@@ -4,6 +4,14 @@ import org.neodatis.odb.ODB;
 import org.neodatis.odb.ODBFactory;
 
 public class Control {
-	public static final String ODB_NAME = "power_plants.neodatis";
-	public static final ODB odb = ODBFactory.open(ODB_NAME);
+	private static final String ODB_NAME = "power_plants.neodatis";
+	private static ODB odb;
+	
+	protected static ODB getOdb() {
+		if(odb == null) {
+			odb = ODBFactory.open(ODB_NAME);
+		} 
+		return odb;
+	}
+	
 }

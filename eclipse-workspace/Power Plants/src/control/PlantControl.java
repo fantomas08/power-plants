@@ -11,7 +11,7 @@ public class PlantControl extends Control {
 	}
 	
 	public void printPlants() {
-		Objects<Object> list = odb.getObjects(NuclearPlant.class);
+		Objects<Object> list = getOdb().getObjects(NuclearPlant.class);
 		
 		for(Object obj : list) {
 			System.out.println(obj.toString());

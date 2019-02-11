@@ -28,7 +28,7 @@ public class Main {
 		pc2.printPlants();
 		
 		
-		Control.odb.close();
+		// odb.close();
 	}
 
 }
