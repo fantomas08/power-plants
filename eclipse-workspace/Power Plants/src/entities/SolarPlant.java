@@ -1,6 +1,5 @@
 package entities;
 
-import java.util.Date;
 import java.util.List;
 
 public class SolarPlant extends Plant {
@@ -9,7 +8,7 @@ public class SolarPlant extends Plant {
 	private double yearlyAvgSunHours;
 	private PanelType panelType;
 	
-	public SolarPlant(String name, double avgProduction, double maxProduction, Date startedWorkingDate,
+	public SolarPlant(String name, double avgProduction, double maxProduction, String startedWorkingDate,
 			List<Delivery> deliveries, double solarPanelSurface, double yearlyAvgSunHours, PanelType panelType) {
 		super(name, avgProduction, maxProduction, startedWorkingDate, deliveries);
 		this.solarPanelSurface = solarPanelSurface;

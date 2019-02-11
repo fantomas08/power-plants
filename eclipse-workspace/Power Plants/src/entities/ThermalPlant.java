@@ -1,6 +1,5 @@
 package entities;
 
-import java.util.Date;
 import java.util.List;
 
 public class ThermalPlant extends Plant {
@@ -9,7 +8,7 @@ public class ThermalPlant extends Plant {
 	private double volConsumedCarbon;
 	private double volGasEmissions;
 	
-	public ThermalPlant(String name, double avgProduction, double maxProduction, Date startedWorkingDate,
+	public ThermalPlant(String name, double avgProduction, double maxProduction, String startedWorkingDate,
 			List<Delivery> deliveries, int numFurnaces, double volConsumedCarbon, double volGasEmissions) {
 		super(name, avgProduction, maxProduction, startedWorkingDate, deliveries);
 		this.numFurnaces = numFurnaces;
