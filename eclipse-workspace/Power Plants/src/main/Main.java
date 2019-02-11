@@ -1,10 +1,7 @@
 package main;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 
-import org.neodatis.*;
 import org.neodatis.odb.*;
 
 import entities.Delivery;
