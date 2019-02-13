@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.Date;
 import java.util.List;
 
 public class SolarPlant extends Plant {
@@ -8,7 +9,7 @@ public class SolarPlant extends Plant {
 	private double yearlyAvgSunHours;
 	private PanelType panelType;
 	
-	public SolarPlant(String name, double avgProduction, double maxProduction, String startedWorkingDate,
+	public SolarPlant(String name, double avgProduction, double maxProduction, Date startedWorkingDate,
 			List<Delivery> deliveries, double solarPanelSurface, double yearlyAvgSunHours, PanelType panelType) {
 		super(name, avgProduction, maxProduction, startedWorkingDate, deliveries);
 		this.solarPanelSurface = solarPanelSurface;
@@ -42,7 +43,7 @@ public class SolarPlant extends Plant {
 
 	@Override
 	public String toString() {
-		return "SolarPlant [solarPanelSurface=" + solarPanelSurface + ", yearlyAvgSunHours=" + yearlyAvgSunHours
+		return super.toString() + " SolarPlant [solarPanelSurface=" + solarPanelSurface + ", yearlyAvgSunHours=" + yearlyAvgSunHours
 				+ ", panelType=" + panelType + "]";
 	}
 	

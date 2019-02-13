@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.Date;
 import java.util.List;
 
 public class Plant {
@@ -7,10 +8,10 @@ public class Plant {
 	private String name;
 	private double avgProduction;
 	private double maxProduction;
-	private String startedWorkingDate;
+	private Date startedWorkingDate;
 	private List<Delivery> deliveries;
 	
-	public Plant(String name, double avgProduction, double maxProduction, String startedWorkingDate, List<Delivery> deliveries) {
+	public Plant(String name, double avgProduction, double maxProduction, Date startedWorkingDate, List<Delivery> deliveries) {
 		this.name = name;
 		this.avgProduction = avgProduction;
 		this.maxProduction = maxProduction;
@@ -42,11 +43,11 @@ public class Plant {
 		this.maxProduction = maxProduction;
 	}
 
-	public String getStartedWorkingDate() {
+	public Date getStartedWorkingDate() {
 		return startedWorkingDate;
 	}
 
-	public void setStartedWorkingDate(String startedWorkingDate) {
+	public void setStartedWorkingDate(Date startedWorkingDate) {
 		this.startedWorkingDate = startedWorkingDate;
 	}
 

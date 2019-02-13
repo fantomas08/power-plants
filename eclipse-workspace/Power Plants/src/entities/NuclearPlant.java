@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.Date;
 import java.util.List;
 
 public class NuclearPlant extends Plant {
@@ -8,7 +9,7 @@ public class NuclearPlant extends Plant {
 	private double volConsumedPlutonium;
 	private double volProducedWaste;
 	
-	public NuclearPlant(String name, double avgProduction, double maxProduction, String startedWorkingDate,
+	public NuclearPlant(String name, double avgProduction, double maxProduction, Date startedWorkingDate,
 			List<Delivery> deliveries, int numReactors, double volConsumedPlutonium, double volProducedWaste) {
 		super(name, avgProduction, maxProduction, startedWorkingDate, deliveries);
 		this.numReactors = numReactors;
@@ -42,7 +43,7 @@ public class NuclearPlant extends Plant {
 
 	@Override
 	public String toString() {
-		return "NuclearPlant [numReactors=" + numReactors + ", volConsumedPlutonium=" + volConsumedPlutonium
+		return super.toString() + " NuclearPlant [numReactors=" + numReactors + ", volConsumedPlutonium=" + volConsumedPlutonium
 				+ ", volProducedWaste=" + volProducedWaste + "]";
 	}
 	

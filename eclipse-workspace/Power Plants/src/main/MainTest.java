@@ -13,9 +13,9 @@ public class MainTest {
 	
 	public static void main(String[] args) {
 		
-		Plant plant = new NuclearPlant("Planta nuclear 1", 
-				100, 150, "25-11-1998", new ArrayList<Delivery>(),
-				4, 50, 3);
+		//Plant plant = new NuclearPlant("Planta nuclear 1", 
+				//100, 150, "25-11-1998", new ArrayList<Delivery>(),
+				//4, 50, 3);
 		
 		//odb.store(plant);
 		PlantControl pc = new PlantControl();
