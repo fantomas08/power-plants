@@ -1,7 +1,5 @@
 package control;
 
-import java.util.List;
-
 import org.neodatis.odb.Objects;
 
 import entities.HydraulicPlant;
@@ -39,19 +37,8 @@ public class PlantControl extends Control {
 	
 	}
 	
-	public Objects<HydraulicPlant> getAllHPlants() {
-		return getOdb().getObjects(HydraulicPlant.class);
+	public Objects<HydraulicPlant> getAllPlants(Class plantType) {
+		return getOdb().getObjects(plantType);
 	}
 	
-	public Objects<SolarPlant> getAllSPlants() {
-		return null;
-	}
-
-	public Objects<NuclearPlant> getAllNPlants() {
-		return null;
-	}
-
-	public Objects<ThermalPlant> getAllTPlants() {
-		return null;
-	}
 }
