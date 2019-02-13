@@ -9,8 +9,10 @@ import java.util.Scanner;
 import org.neodatis.odb.Objects;
 
 import control.Control;
+import control.DistributorControl;
 import control.PlantControl;
 import entities.Delivery;
+import entities.Distributor;
 import entities.HydraulicPlant;
 import entities.NuclearPlant;
 import entities.PanelType;
@@ -24,9 +26,11 @@ public class Menu {
 	private Scanner scanner;
 	private SimpleDateFormat dateFormat;
 	private PlantControl plantControl;
+	private DistributorControl distributorControl;
 	
-	public Menu(PlantControl plantControl) {
+	public Menu(PlantControl plantControl, DistributorControl distributorControl) {
 		this.plantControl = plantControl;
+		this.distributorControl = distributorControl;
 		scanner = new Scanner(System.in);
 		dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 	}
@@ -43,7 +47,6 @@ public class Menu {
 			menu += "7) Add delivery\n";
 			menu += "8) Search\n";
 			menu += "9) EXIT\n";
-			
 		}
 		System.out.println(menu);
 	}
@@ -74,7 +77,7 @@ public class Menu {
 					
 					break;
 				case "7":
-					
+					addDeliveryMenu();
 					break;
 				case "8":
 					
@@ -364,7 +367,7 @@ public class Menu {
 	}
 	
 	private void updatePlant(Class plantType) {
-		Objects<Object> objects = plantControl.getAllPlants(plantType);
+		Objects<Object> objects = plantControl.getPlants(plantType);
 		int size = objects.size();
 		if(size == 0) {
 			System.out.println("There are no plants available!");
@@ -655,7 +658,117 @@ public class Menu {
 		plantControl.addPlant(wantedPlant);
 		System.out.println("Updated successfully!");
 	}
-	
 	// END Update Plants
+	
+	// START Add Delivery
+	// TODO: FALTA PROBAR
+	private void addDeliveryMenu() {
+		Plant plant = null;
+		Distributor distributor = null;
+		Date date;
+		double quantity;
+		
+		Objects<Object> objects = plantControl.getAllPlants();
+		int size = objects.size();
+		if(size == 0) {
+			System.out.println("There are no plants available!");
+			System.out.println("Operation cancelled.");
+			return;
+		}
+		int i = 1;
+		while(objects.hasNext()) {
+			System.out.println(i + ") " + objects.next().toString());
+			++i;
+		}
+		System.out.println("Type the power plant delivering the power: ");
+		int choice;
+		try {
+			choice = Integer.parseInt(scanner.nextLine());
+			if(choice < 1 || choice > size) {
+				System.out.println("Index not valid!");
+				System.out.println("Operation cancelled.");
+				return;
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("Number format not correct!");
+			System.out.println("Operation cancelled.");
+			return;
+		}
+		i = 1;
+		objects.reset();
+		while(i <= choice && objects.hasNext()) {
+			if(i == choice) {
+				plant = (Plant) objects.next();
+			}
+			++i;
+		}
+		if(plant == null) {
+			System.out.println("---ERROR: Plant not found after choice!");
+			return;
+		}
+		
+		Objects<Distributor> distributors = distributorControl.getDistributors();
+		size = distributors.size();
+		if(size == 0) {
+			System.out.println("There are no distributors available!");
+			System.out.println("Operation cancelled.");
+			return;
+		}
+		i = 1;
+		while(distributors.hasNext()) {
+			System.out.println(i + ") " + distributors.next().toString());
+			++i;
+		}
+		System.out.println("Type the distributor who gets the power delivered: ");
+		try {
+			choice = Integer.parseInt(scanner.nextLine());
+			if(choice < 1 || choice > size) {
+				System.out.println("Index not valid!");
+				System.out.println("Operation cancelled.");
+				return;
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("Number format not correct!");
+			System.out.println("Operation cancelled.");
+			return;
+		}
+		i = 1;
+		distributors.reset();
+		while(i <= choice && distributors.hasNext()) {
+			if(i == choice) {
+				distributor = distributors.next();
+			}
+			++i;
+		}
+		if(distributor == null) {
+			System.out.println("---ERROR: Distributor not found after choice!");
+			return;
+		}
+		
+		System.out.println("Type the date (dd-mm-yyyy): ");
+		try {
+			date = dateFormat.parse(scanner.nextLine());
+		} catch (ParseException e) {
+			System.out.println("Date format not correct!");
+			System.out.println("Operation cancelled.");
+			return;
+		}
+		
+		System.out.println("Type the quantity of energy delivered: ");
+		try {
+			quantity = Double.parseDouble(scanner.nextLine());
+		} catch (NumberFormatException e) {
+			System.out.println("Number format not correct!");
+			System.out.println("Operation cancelled.");
+			return;
+		}
+		
+		Delivery delivery = new Delivery(quantity, date, distributor);
+		plant.getDeliveries().add(delivery);
+		plantControl.addPlant(plant);
+		System.out.println("Delivery added successfully!");
+	}
+	// END Add Delivery
+	
 	
 }
