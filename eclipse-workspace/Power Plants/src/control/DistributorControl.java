@@ -2,9 +2,12 @@ package control;
 
 import java.util.List;
 
+import org.neodatis.odb.Objects;
+
 import entities.DistributionLine;
 import entities.DistributionNetwork;
 import entities.Distributor;
+import entities.ServiceZone;
 
 public class DistributorControl extends Control {
 
@@ -54,5 +57,9 @@ public class DistributorControl extends Control {
 			}
 		}
 		getOdb().delete(distributor);
+	}
+	
+	public Objects<Distributor> getDistributors() {
+		return getOdb().getObjects(Distributor.class);
 	}
 }
