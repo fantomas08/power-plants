@@ -19,10 +19,10 @@ public class MainTest {
 		
 		//odb.store(plant);
 		PlantControl pc = new PlantControl();
-		pc.printPlants();
+		//pc.printPlants();
 		
 		PlantControl pc2 = new PlantControl();
-		pc2.printPlants();
+		//pc2.printPlants();
 		
 		
 		// odb.close();

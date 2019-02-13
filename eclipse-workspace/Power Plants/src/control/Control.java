@@ -14,4 +14,10 @@ public class Control {
 		return odb;
 	}
 	
+	public static void closeOdb() {
+		if(odb != null) {
+			odb.close();
+		}
+	}
+	
 }

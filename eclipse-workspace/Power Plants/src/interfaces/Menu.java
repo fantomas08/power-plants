@@ -92,7 +92,7 @@ public class Menu {
 	private void closeProgram() {
 		System.out.println("BYE!");
 		scanner.close();
-		// TODO: ODB CLOSE
+		PlantControl.closeOdb();
 	}
 	
 	// START Add Plants
@@ -127,7 +127,6 @@ public class Menu {
 				break;
 		}
 	}
-	
 	
 	private void addPlant(Class plantType) {
 		String name;
@@ -202,7 +201,7 @@ public class Menu {
 			HydraulicPlant hp = new HydraulicPlant(name, avgProduction, maxProduction,
 					date, new ArrayList<Delivery>(), maxCapacity, occupation, numTurbines);
 			
-			plantControl.addHPlant(hp);
+			plantControl.addPlant(hp);
 			System.out.println("Added successfully!");
 			return;
 		}
@@ -249,7 +248,7 @@ public class Menu {
 			SolarPlant sp = new SolarPlant(name, avgProduction, maxProduction,
 					date, new ArrayList<Delivery>(), solarPanelSurface, yearlyAvgSunHours, panelType);
 			
-			plantControl.addSPlant(sp);
+			plantControl.addPlant(sp);
 			System.out.println("Added successfully!");
 			return;
 		}
@@ -286,7 +285,7 @@ public class Menu {
 			NuclearPlant np = new NuclearPlant(name, avgProduction, maxProduction,
 					date, new ArrayList<Delivery>(), numReactors, volConsumedPlutonium, volProducedWaste);
 			
-			plantControl.addNPlant(np);
+			plantControl.addPlant(np);
 			System.out.println("Added successfully!");
 			return;
 		}
@@ -323,7 +322,7 @@ public class Menu {
 			ThermalPlant tp = new ThermalPlant(name, avgProduction, maxProduction,
 					date, new ArrayList<Delivery>(), numFurnaces, volConsumedCarbon, volGasEmissions);
 			
-			plantControl.addTPlant(tp);
+			plantControl.addPlant(tp);
 			System.out.println("Added successfully!");
 			return;
 		}
@@ -347,16 +346,16 @@ public class Menu {
 		String answ = scanner.nextLine();
 		switch(answ) {
 			case "1":
-				updateHPlant();
+				updatePlant(HydraulicPlant.class);
 				break;
 			case "2":
-				updateSPlant();
+				updatePlant(SolarPlant.class);
 				break;
 			case "3":
-				updateNPlant();
+				updatePlant(NuclearPlant.class);
 				break;
 			case "4":
-				updateTPlant();
+				updatePlant(ThermalPlant.class);
 				break;
 			default:
 				System.out.println("Incorrect option!");
@@ -365,27 +364,7 @@ public class Menu {
 	}
 	
 	private void updatePlant(Class plantType) {
-		boolean foundClass = false;
-		if(plantType == HydraulicPlant.class) {
-			Objects<HydraulicPlant> objects = plantControl.getAllPlants(plantType);
-			foundClass = true;
-		}
-		if(plantType == HydraulicPlant.class) {
-			Objects<HydraulicPlant> objects = plantControl.getAllPlants(plantType);
-			foundClass = true;
-		}
-		if(plantType == HydraulicPlant.class) {
-			Objects<HydraulicPlant> objects = plantControl.getAllPlants(plantType);
-			foundClass = true;
-		}
-		if(plantType == HydraulicPlant.class) {
-			Objects<HydraulicPlant> objects = plantControl.getAllPlants(plantType);
-			foundClass = true;
-		}
-		if(!foundClass) {
-			return;
-		}
-		
+		Objects<Object> objects = plantControl.getAllPlants(plantType);
 		int size = objects.size();
 		if(size == 0) {
 			System.out.println("There are no plants available!");
@@ -412,162 +391,265 @@ public class Menu {
 			return;
 		}
 		
-		HydraulicPlant hPlant = null;
+		Plant wantedPlant = null;
 		i = 1;
 		objects.reset();
 		while(i <= choice && objects.hasNext()) {
 			if(i == choice) {
-				hPlant = objects.next();
+				wantedPlant = (Plant) objects.next();
 			}
 			++i;
 		}
-		if(hPlant == null) {
+		if(wantedPlant == null) {
 			System.out.println("---ERROR: Plant not found after choice!");
 			return;
 		}
-		System.out.println("Modifying: " + hPlant.toString());
+		System.out.println("Modifying: " + wantedPlant.toString());
 		
-		System.out.println("1) Modify avg. production");
-		System.out.println("2) Modify occupation");
-		try {
-			choice = Integer.parseInt(scanner.nextLine());
-			if(choice < 1 || choice > 2) {
-				System.out.println("Index not valid!");
-				System.out.println("Operation cancelled.");
-				return;
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("Number format not correct!");
-			System.out.println("Operation cancelled.");
-			return;
-		}
-		switch(choice) {
-		case 1:
-			System.out.println("Type the new avg. production");
-			double avgProduction;
+		if(wantedPlant.getClass() == HydraulicPlant.class) {
+			wantedPlant = (HydraulicPlant) wantedPlant;
+			System.out.println("1) Modify avg. production");
+			System.out.println("2) Modify occupation");
 			try {
-				avgProduction = Double.parseDouble(scanner.nextLine());
+				choice = Integer.parseInt(scanner.nextLine());
+				if(choice < 1 || choice > 2) {
+					System.out.println("Index not valid!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
 			} catch (NumberFormatException e) {
 				System.out.println("Number format not correct!");
 				System.out.println("Operation cancelled.");
 				return;
 			}
-			hPlant.setAvgProduction(avgProduction);
-			break;
-		case 2:
-			System.out.println("Type the new occupation");
-			double occupation;
+			switch(choice) {
+			case 1:
+				System.out.println("Type the new avg. production:");
+				double avgProduction;
+				try {
+					avgProduction = Double.parseDouble(scanner.nextLine());
+				} catch (NumberFormatException e) {
+					System.out.println("Number format not correct!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
+				wantedPlant.setAvgProduction(avgProduction);
+				break;
+			case 2:
+				System.out.println("Type the new occupation:");
+				double occupation;
+				try {
+					occupation = Double.parseDouble(scanner.nextLine());
+				} catch (NumberFormatException e) {
+					System.out.println("Number format not correct!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
+				((HydraulicPlant) wantedPlant).setOccupation(occupation);
+				break;
+			}
+			System.out.println(wantedPlant.toString());
+		}
+		if(wantedPlant.getClass() == SolarPlant.class) {
+			wantedPlant = ((SolarPlant) wantedPlant);
+			boolean changedPanelSurface = false;
+			do {
+				System.out.println("1) Modify avg. production");
+				System.out.println("2) Modify max. production");
+				System.out.println("3) Modify panel surface");
+				System.out.println("4) Stop modifying plant");
+				try {
+					choice = Integer.parseInt(scanner.nextLine());
+					if(choice < 1 || choice > 4) {
+						System.out.println("Index not valid!");
+						System.out.println("Operation cancelled.");
+						return;
+					}
+				} catch (NumberFormatException e) {
+					System.out.println("Number format not correct!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
+				switch(choice) {
+				case 1:
+					System.out.println("Type the new avg. production");
+					double avgProduction;
+					try {
+						avgProduction = Double.parseDouble(scanner.nextLine());
+					} catch (NumberFormatException e) {
+						System.out.println("Number format not correct!");
+						System.out.println("Operation cancelled.");
+						return;
+					}
+					wantedPlant.setAvgProduction(avgProduction);
+					break;
+				case 2:
+					if(!changedPanelSurface) {
+						System.out.println("Panel surface must be changed before changing max. production");
+						break;
+					}
+					System.out.println("Type the new max. production:");
+					double maxProduction;
+					try {
+						maxProduction = Double.parseDouble(scanner.nextLine());
+					} catch (NumberFormatException e) {
+						System.out.println("Number format not correct!");
+						System.out.println("Operation cancelled.");
+						return;
+					}
+					wantedPlant.setMaxProduction(maxProduction);
+					changedPanelSurface = false;
+					break;
+				case 3:
+					System.out.println("Type the new panel surface:");
+					double solarPanelSurface;
+					try {
+						solarPanelSurface = Double.parseDouble(scanner.nextLine());
+					} catch (NumberFormatException e) {
+						System.out.println("Number format not correct!");
+						System.out.println("Operation cancelled.");
+						return;
+					}
+					((SolarPlant) wantedPlant).setSolarPanelSurface(solarPanelSurface);
+					changedPanelSurface = true;
+					break;
+				case 4:
+					System.out.println(wantedPlant.toString());
+					break;
+				}
+			} while (choice != 4);
+		}
+		if(wantedPlant.getClass() == NuclearPlant.class) {
+			wantedPlant = (NuclearPlant) wantedPlant;
+			System.out.println("1) Modify num. reactors");
+			System.out.println("2) Modify avg. production");
 			try {
-				occupation = Double.parseDouble(scanner.nextLine());
+				choice = Integer.parseInt(scanner.nextLine());
+				if(choice < 1 || choice > 2) {
+					System.out.println("Index not valid!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
 			} catch (NumberFormatException e) {
 				System.out.println("Number format not correct!");
 				System.out.println("Operation cancelled.");
 				return;
 			}
-			hPlant.setOccupation(occupation);
-			break;
+			switch(choice) {
+			case 1:
+				System.out.println("Type the new num. reactors:");
+				int numReactors;
+				try {
+					numReactors = Integer.parseInt(scanner.nextLine());
+				} catch (NumberFormatException e) {
+					System.out.println("Number format not correct!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
+				
+				System.out.println("Type the new vol. of consumed plutonium:");
+				double volConsumedPlutonium;
+				try {
+					volConsumedPlutonium = Double.parseDouble(scanner.nextLine());
+				} catch (NumberFormatException e) {
+					System.out.println("Number format not correct!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
+				
+				System.out.println("Type the new vol. of nuclear waste:");
+				double volNuclearWaste;
+				try {
+					volNuclearWaste = Double.parseDouble(scanner.nextLine());
+				} catch (NumberFormatException e) {
+					System.out.println("Number format not correct!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
+				((NuclearPlant) wantedPlant).setNumReactors(numReactors);
+				((NuclearPlant) wantedPlant).setVolConsumedPlutonium(volConsumedPlutonium);
+				((NuclearPlant) wantedPlant).setVolProducedWaste(volNuclearWaste);
+			case 2:
+				System.out.println("Type the new avg. production:");
+				double avgProduction;
+				try {
+					avgProduction = Double.parseDouble(scanner.nextLine());
+				} catch (NumberFormatException e) {
+					System.out.println("Number format not correct!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
+				wantedPlant.setAvgProduction(avgProduction);
+				break;
+			}
+			System.out.println(wantedPlant.toString());
 		}
-		plantControl.addHPlant(hPlant);
+		if(wantedPlant.getClass() == ThermalPlant.class) {
+			wantedPlant = (ThermalPlant) wantedPlant;
+			System.out.println("1) Modify avg. production");
+			System.out.println("2) Modify num. furnaces");
+			try {
+				choice = Integer.parseInt(scanner.nextLine());
+				if(choice < 1 || choice > 2) {
+					System.out.println("Index not valid!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("Number format not correct!");
+				System.out.println("Operation cancelled.");
+				return;
+			}
+			switch(choice) {
+			case 1:
+				System.out.println("Type the new avg. production:");
+				double avgProduction;
+				try {
+					avgProduction = Double.parseDouble(scanner.nextLine());
+				} catch (NumberFormatException e) {
+					System.out.println("Number format not correct!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
+				wantedPlant.setAvgProduction(avgProduction);
+				break;
+			case 2:
+				System.out.println("Type the new num. of furnaces:");
+				int numFurnaces;
+				try {
+					numFurnaces = Integer.parseInt(scanner.nextLine());
+				} catch (NumberFormatException e) {
+					System.out.println("Number format not correct!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
+				System.out.println("Type the new vol. of consumed carbon:");
+				double consumedCarabon;
+				try {
+					consumedCarabon = Double.parseDouble(scanner.nextLine());
+				} catch (NumberFormatException e) {
+					System.out.println("Number format not correct!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
+				System.out.println("Type the new vol. of emitted gases:");
+				double emittedGases;
+				try {
+					emittedGases = Double.parseDouble(scanner.nextLine());
+				} catch (NumberFormatException e) {
+					System.out.println("Number format not correct!");
+					System.out.println("Operation cancelled.");
+					return;
+				}
+				((ThermalPlant) wantedPlant).setNumFurnaces(numFurnaces);
+				((ThermalPlant) wantedPlant).setVolConsumedCarbon(consumedCarabon);
+				((ThermalPlant) wantedPlant).setVolGasEmissions(emittedGases);
+				break;
+			}
+			System.out.println(wantedPlant.toString());
+		}
+		plantControl.addPlant(wantedPlant);
 		System.out.println("Updated successfully!");
-	}
-	
-	private void updateHPlant() {
-		Objects<HydraulicPlant> objects = plantControl.getAllHPlants();
-		int size = objects.size();
-		if(size == 0) {
-			System.out.println("There are no thermal plants available!");
-			System.out.println("Operation cancelled.");
-			return;
-		}
-		int i = 1;
-		while(objects.hasNext()) {
-			System.out.println(i + ") " + objects.next().toString());
-			++i;
-		}
-		System.out.println("Choose the plant to update:");
-		int choice;
-		try {
-			choice = Integer.parseInt(scanner.nextLine());
-			if(choice < 1 || choice > size) {
-				System.out.println("Index not valid!");
-				System.out.println("Operation cancelled.");
-				return;
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("Number format not correct!");
-			System.out.println("Operation cancelled.");
-			return;
-		}
-		
-		HydraulicPlant hPlant = null;
-		i = 1;
-		objects.reset();
-		while(i <= choice && objects.hasNext()) {
-			if(i == choice) {
-				hPlant = objects.next();
-			}
-			++i;
-		}
-		if(hPlant == null) {
-			System.out.println("---ERROR: Plant not found after choice!");
-			return;
-		}
-		System.out.println("Modifying: " + hPlant.toString());
-		
-		System.out.println("1) Modify avg. production");
-		System.out.println("2) Modify occupation");
-		try {
-			choice = Integer.parseInt(scanner.nextLine());
-			if(choice < 1 || choice > 2) {
-				System.out.println("Index not valid!");
-				System.out.println("Operation cancelled.");
-				return;
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("Number format not correct!");
-			System.out.println("Operation cancelled.");
-			return;
-		}
-		switch(choice) {
-		case 1:
-			System.out.println("Type the new avg. production");
-			double avgProduction;
-			try {
-				avgProduction = Double.parseDouble(scanner.nextLine());
-			} catch (NumberFormatException e) {
-				System.out.println("Number format not correct!");
-				System.out.println("Operation cancelled.");
-				return;
-			}
-			hPlant.setAvgProduction(avgProduction);
-			break;
-		case 2:
-			System.out.println("Type the new occupation");
-			double occupation;
-			try {
-				occupation = Double.parseDouble(scanner.nextLine());
-			} catch (NumberFormatException e) {
-				System.out.println("Number format not correct!");
-				System.out.println("Operation cancelled.");
-				return;
-			}
-			hPlant.setOccupation(occupation);
-			break;
-		}
-		plantControl.addHPlant(hPlant);
-		System.out.println("Updated successfully!");
-	}
-	
-	private void updateSPlant() {
-		
-	}
-
-	private void updateNPlant() {
-	
-	}
-
-	private void updateTPlant() {
-	
 	}
 	
 	// END Update Plants
