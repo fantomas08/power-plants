@@ -3,6 +3,9 @@ package control;
 import java.util.List;
 
 import org.neodatis.odb.Objects;
+import org.neodatis.odb.core.query.IQuery;
+import org.neodatis.odb.core.query.criteria.Where;
+import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
 
 import entities.DistributionLine;
 import entities.DistributionNetwork;
@@ -26,7 +29,7 @@ public class DistributorControl extends Control {
 		getOdb().store(network);
 	}
 
-	// Hay que probar
+	// 
 	public void deleteNetwork(DistributionNetwork network, Distributor distributor) {
 		distributor.getNetworks().remove(network);
 		if (!network.getLines().isEmpty()) {
@@ -37,13 +40,13 @@ public class DistributorControl extends Control {
 		getOdb().delete(network);
 	}
 
-	// Hay que probar
+	// 
 	public void deleteLine(DistributionLine line, DistributionNetwork network) {
 		network.getLines().remove(line);
 		getOdb().delete(line);
 	}
 
-	// Hay que probar
+	// 
 	public void deleteDistributor(Distributor distributor) {
 		if (!distributor.getNetworks().isEmpty()) {
 			for (DistributionNetwork network : distributor.getNetworks()) {
@@ -68,5 +71,14 @@ public class DistributorControl extends Control {
 	
 	public Objects<DistributionLine> getDistributionLines() {
 		return getOdb().getObjects(DistributionLine.class);
+	}
+	
+	public boolean distributorExists(String name) {
+		IQuery query = new CriteriaQuery(Distributor.class, Where.equal("name", name));
+		Objects<Distributor> distributors = getOdb().getObjects(query);
+		if (distributors.hasNext()) {
+			return true;
+		}
+		return false;
 	}
 }

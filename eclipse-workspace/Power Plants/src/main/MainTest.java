@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import org.neodatis.odb.ODB;
 import org.neodatis.odb.ODBFactory;
 import org.neodatis.odb.Objects;
+import org.neodatis.odb.core.query.IQuery;
+import org.neodatis.odb.core.query.criteria.Where;
+import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
 
 import control.Control;
 import control.DistributorControl;
@@ -61,7 +64,7 @@ public class MainTest {
 		dc.addDistributor(dis2);
 		*/
 		
-		ArrayList<Distributor> disAr = new ArrayList<Distributor>();
+		/*ArrayList<Distributor> disAr = new ArrayList<Distributor>();
 		ArrayList<DistributionNetwork> netAr = new ArrayList<DistributionNetwork>();
 		ArrayList<DistributionLine> lineAr = new ArrayList<DistributionLine>();
 		
@@ -86,6 +89,7 @@ public class MainTest {
 		System.out.println(disAr.toString());
 		System.out.println(netAr.toString());
 		System.out.println(lineAr.toString());
+		*/
 		
 		
 		odb.close();
