@@ -406,6 +406,7 @@ public class Menu {
 		}
 		System.out.println("Modifying: " + wantedPlant.toString());
 		
+		// UPDATE HYDRAULIC PLANT
 		if(wantedPlant.getClass() == HydraulicPlant.class) {
 			wantedPlant = (HydraulicPlant) wantedPlant;
 			System.out.println("1) Modify avg. production");
@@ -450,6 +451,7 @@ public class Menu {
 			}
 			System.out.println(wantedPlant.toString());
 		}
+		// UPDATE SOLAR PLANT
 		if(wantedPlant.getClass() == SolarPlant.class) {
 			wantedPlant = ((SolarPlant) wantedPlant);
 			boolean changedPanelSurface = false;
@@ -518,7 +520,7 @@ public class Menu {
 					break;
 				}
 			} while (choice != 4);
-		}
+		}// UPDATE NUCLEAR PLANT
 		if(wantedPlant.getClass() == NuclearPlant.class) {
 			wantedPlant = (NuclearPlant) wantedPlant;
 			System.out.println("1) Modify num. reactors");
@@ -584,6 +586,7 @@ public class Menu {
 			}
 			System.out.println(wantedPlant.toString());
 		}
+		// UPDATE THERMAL PLANT
 		if(wantedPlant.getClass() == ThermalPlant.class) {
 			wantedPlant = (ThermalPlant) wantedPlant;
 			System.out.println("1) Modify avg. production");
@@ -648,6 +651,7 @@ public class Menu {
 			}
 			System.out.println(wantedPlant.toString());
 		}
+		// SAVE CHANGES
 		plantControl.addPlant(wantedPlant);
 		System.out.println("Updated successfully!");
 	}
