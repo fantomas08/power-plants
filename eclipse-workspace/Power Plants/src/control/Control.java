@@ -7,7 +7,7 @@ public class Control {
 	private static final String ODB_NAME = "power_plants.neodatis";
 	private static ODB odb;
 	
-	protected static ODB getOdb() {
+	public static ODB getOdb() {
 		if(odb == null) {
 			odb = ODBFactory.open(ODB_NAME);
 		} 

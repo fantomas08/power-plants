@@ -1,5 +1,7 @@
 package control;
 
+import org.neodatis.odb.Objects;
+
 import entities.DistributionLine;
 import entities.ServiceZone;
 
@@ -20,5 +22,9 @@ public class ServiceZoneControl extends Control {
 	public void deleteDistributionLine(ServiceZone zone, DistributionLine line) {
 		line.getZones().remove(zone);
 		getOdb().store(line);
+	}
+	
+	public Objects<ServiceZone> getServiceZones() {
+		return getOdb().getObjects(ServiceZone.class);
 	}
 }
