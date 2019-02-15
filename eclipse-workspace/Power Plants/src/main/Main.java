@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.neodatis.odb.*;
 
 import control.Control;
+import control.DistributionLineControl;
 import control.DistributorControl;
 import control.PlantControl;
 import control.ServiceZoneControl;
@@ -22,13 +23,15 @@ public class Main {
 		PlantControl plantControl = new PlantControl();
 		DistributorControl distributorControl = new DistributorControl();
 		ServiceZoneControl serviceZoneControl = new ServiceZoneControl();
+		DistributionLineControl distributionLineControl = new DistributionLineControl();
 		//HydraulicPlant hPlant = new HydraulicPlant("planta1", 5, 6, null, null, 7, 8, 9);
 		//plantControl.addPlant(hPlant);
 		//plantControl.closeOdb();
 		//plantControl.getAllPlants(HydraulicPlant.class);
 		
 		
-		Menu menu = new Menu(plantControl, distributorControl, serviceZoneControl);
+		Menu menu = new Menu(plantControl, distributorControl, serviceZoneControl,
+				distributionLineControl);
 		menu.startMenu();
 	}
 

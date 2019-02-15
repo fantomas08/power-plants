@@ -1,9 +1,14 @@
 package control;
 
+import java.util.ArrayList;
+
 import org.neodatis.odb.Objects;
+import org.neodatis.odb.core.query.criteria.ICriterion;
+import org.neodatis.odb.core.query.criteria.Where;
 
 import entities.DistributionLine;
 import entities.ServiceZone;
+import util.ZoneLineCounter;
 
 public class ServiceZoneControl extends Control {
 	
@@ -26,5 +31,42 @@ public class ServiceZoneControl extends Control {
 	
 	public Objects<ServiceZone> getServiceZones() {
 		return getOdb().getObjects(ServiceZone.class);
+	}
+	
+	public ArrayList<ServiceZone> getZonesNumLines(int num, DistributionLineControl control) {
+		Objects<DistributionLine> objects = control.getDistributionLines();
+		ArrayList<ZoneLineCounter> lineCounters = new ArrayList<ZoneLineCounter>();
+		boolean foundCounter = false;
+		
+		// Loop through all distribution lines
+		while(objects.hasNext()) {
+			DistributionLine currentDLine = objects.next();
+			// Loop through all the zones that the current line passes through
+			for(ServiceZone currentZone : currentDLine.getZones()) {
+				// Loop through the already counted zones
+				for(ZoneLineCounter currentCounter : lineCounters) {
+					// If a zone of the current line was already counted, add 1
+					if(currentCounter.getZone().equals(currentZone)) {
+						currentCounter.setCount(1 + currentCounter.getCount());
+						foundCounter = true;
+						break;
+					}
+				}
+				// If the zone was not counted, add it
+				if(!foundCounter) {
+					lineCounters.add(new ZoneLineCounter(currentZone, 1));
+				}
+				foundCounter = false;
+			}
+		}
+		
+		// Loop through all the zones and add the ones with more lines than the attribute
+		ArrayList<ServiceZone> zones = new ArrayList<ServiceZone>();
+		for(ZoneLineCounter counter : lineCounters) {
+			if(counter.getCount() > num) {
+				zones.add(counter.getZone());
+			}
+		}
+		return zones;
 	}
 }

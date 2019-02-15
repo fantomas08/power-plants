@@ -12,6 +12,7 @@ import org.neodatis.odb.core.query.criteria.Where;
 import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
 
 import control.Control;
+import control.DistributionLineControl;
 import control.DistributorControl;
 import control.PlantControl;
 import control.ServiceZoneControl;
@@ -21,20 +22,23 @@ import entities.HydraulicPlant;
 import entities.NuclearPlant;
 import entities.PanelType;
 import entities.Plant;
+import entities.ServiceZone;
 import entities.SolarPlant;
 import entities.ThermalPlant;
+import util.PlantTypeParser;
 
 public class Menu {
 
-	private String menu, addPlantMenu, updatePlantMenu;
+	private String menu, addPlantMenu, updatePlantMenu, searchMenu;
 	private Scanner scanner;
 	private SimpleDateFormat dateFormat;
 	private PlantControl plantControl;
 	private DistributorControl distributorControl;
 	private ServiceZoneControl serviceZoneControl;
+	private DistributionLineControl distributionLineControl;
 
 	public Menu(PlantControl plantControl, DistributorControl distributorControl,
-			ServiceZoneControl serviceZoneControl) {
+			ServiceZoneControl serviceZoneControl, DistributionLineControl distributionLineControl) {
 		this.plantControl = plantControl;
 		this.distributorControl = distributorControl;
 		this.serviceZoneControl = serviceZoneControl;
@@ -87,7 +91,7 @@ public class Menu {
 				addDeliveryMenu();
 				break;
 			case "8":
-
+				searchMenu();
 				break;
 			case "9":
 				closeProgram();
@@ -139,6 +143,7 @@ public class Menu {
 	}
 
 	private void addPlant(Class plantType) {
+		// COMMON ATTRIBUTES FOR ALL PLANTS
 		String name;
 		Date date;
 		double avgProduction, maxProduction;
@@ -177,7 +182,7 @@ public class Menu {
 			System.out.println("Operation cancelled.");
 			return;
 		}
-
+		// ATTRIBUTES FOR HYDRAULIC PLANTS
 		if (plantType == HydraulicPlant.class) {
 			double maxCapacity, occupation;
 			int numTurbines;
@@ -215,9 +220,11 @@ public class Menu {
 			System.out.println("Added successfully!");
 			return;
 		}
+		// ATTRIBUTES FOR SOLAR PLANTS
 		if (plantType == SolarPlant.class) {
 			double solarPanelSurface, yearlyAvgSunHours;
 			PanelType panelType;
+			
 			System.out.println("Type the panel's surface area:");
 			try {
 				solarPanelSurface = Double.parseDouble(scanner.nextLine());
@@ -262,9 +269,11 @@ public class Menu {
 			System.out.println("Added successfully!");
 			return;
 		}
+		// ATTRIBUTES FOR NUCLEAR PLANTS
 		if (plantType == NuclearPlant.class) {
 			int numReactors;
 			double volConsumedPlutonium, volProducedWaste;
+			
 			System.out.println("Type the num. reactors:");
 			try {
 				numReactors = Integer.parseInt(scanner.nextLine());
@@ -299,9 +308,11 @@ public class Menu {
 			System.out.println("Added successfully!");
 			return;
 		}
+		// ATTRIBUTES FOR THERMAL PLANTS
 		if (plantType == ThermalPlant.class) {
 			int numFurnaces;
 			double volConsumedCarbon, volGasEmissions;
+			
 			System.out.println("Type the num. of furances:");
 			try {
 				numFurnaces = Integer.parseInt(scanner.nextLine());
@@ -377,7 +388,7 @@ public class Menu {
 		Objects<Object> objects = plantControl.getPlants(plantType);
 		int size = objects.size();
 		if (size == 0) {
-			System.out.println("There are no plants available!");
+			System.out.println("There are no plants of this type available!");
 			System.out.println("Operation cancelled.");
 			return;
 		}
@@ -411,7 +422,8 @@ public class Menu {
 			++i;
 		}
 		if (wantedPlant == null) {
-			System.out.println("---ERROR: Plant not found after choice!");
+			// Shouldn't happen
+			System.out.println("---ERROR: Plant not found after choice!---");
 			return;
 		}
 		System.out.println("Modifying: " + wantedPlant.toString());
@@ -530,7 +542,8 @@ public class Menu {
 					break;
 				}
 			} while (choice != 4);
-		} // UPDATE NUCLEAR PLANT
+		} 
+		// UPDATE NUCLEAR PLANT
 		if (wantedPlant.getClass() == NuclearPlant.class) {
 			wantedPlant = (NuclearPlant) wantedPlant;
 			System.out.println("1) Modify num. reactors");
@@ -687,6 +700,7 @@ public class Menu {
 			System.out.println(i + ") " + objects.next().toString());
 			++i;
 		}
+		
 		System.out.println("Type the power plant delivering the power: ");
 		int choice;
 		try {
@@ -701,6 +715,7 @@ public class Menu {
 			System.out.println("Operation cancelled.");
 			return;
 		}
+		
 		i = 1;
 		objects.reset();
 		while (i <= choice && objects.hasNext()) {
@@ -726,6 +741,7 @@ public class Menu {
 			System.out.println(i + ") " + distributors.next().toString());
 			++i;
 		}
+		
 		System.out.println("Type the distributor who gets the power delivered: ");
 		try {
 			choice = Integer.parseInt(scanner.nextLine());
@@ -739,6 +755,7 @@ public class Menu {
 			System.out.println("Operation cancelled.");
 			return;
 		}
+		
 		i = 1;
 		distributors.reset();
 		while (i <= choice && distributors.hasNext()) {
@@ -839,6 +856,147 @@ public class Menu {
 			System.out.println("Incorrect option!");
 		}
 		
+	}
+	
+	private void printSearchMenu() {
+		if(searchMenu == null) {
+			searchMenu = "Available queries:\n";
+			searchMenu += "1) Search for plants opened before date\n";
+			searchMenu += "2) Search for service zones by number of distribution lines\n";
+			searchMenu += "3) Search for distributors by received energy from solar or thermal plants\n";
+			searchMenu += "4) Search for deliveries from nuclear plants by date and nuclear waste\n";
+		}
+		System.out.println(searchMenu);
+	}
+	
+	private void searchMenu() {
+		printSearchMenu();
+		switch (scanner.nextLine()) {
+		case "1":
+			searchPlantsDateMenu();
+			break;
+		case "2":
+			searchZonesNumLinesMenu();
+			break;
+		case "3":
+			searchDistributorsSolarThermalMenu();
+			break;
+		case "4":
+			searchDeliveriesNuclearPlantsMenu();
+			break;
+		default:
+			System.out.println("Invalid option!");
+			break;
+		}
+	}
+	
+	private void searchPlantsDateMenu() {
+		Date date;
+		System.out.println("Type the date (dd-mm-yyyy): ");
+		try {
+			date = dateFormat.parse(scanner.nextLine());
+		} catch (ParseException e) {
+			System.out.println("Date format not correct!");
+			System.out.println("Operation cancelled.");
+			return;
+		}
+		
+		ArrayList<Plant> plants = plantControl.getPlantsBeforeDate(date);
+		int size = plants.size();
+		if(plants == null || size == 0) {
+			System.out.println("There are no plants opened before that date.");
+			return;
+		}
+		
+		System.out.println("(" + size + ") plants opened before " + date.toString() + ": ");
+		for(Plant plant : plants) {
+			System.out.println("Name: " + plant.getName());
+			System.out.println("Type: " + PlantTypeParser.parseType(plant.getClass()));
+			System.out.println("Avg. production: " + plant.getAvgProduction());
+			System.out.println("Max. production: " + plant.getMaxProduction());
+			System.out.println("Date opened: " + plant.getStartedWorkingDate());
+			System.out.println("");
+		}
+	}
+	
+	// TODO: FALTA PROBAR
+	private void searchZonesNumLinesMenu() {
+		System.out.println("Type the minimum number of lines (not including): ");
+		int numLines;
+		try {
+			numLines = Integer.parseInt(scanner.nextLine());
+		} catch (NumberFormatException e) {
+			System.out.println("Number format not correct!");
+			System.out.println("Operation cancelled.");
+			return;
+		}
+		
+		ArrayList<ServiceZone> zones = serviceZoneControl.getZonesNumLines(numLines,
+				distributionLineControl);
+		
+		int size = zones.size();
+		if(size == 0) {
+			System.out.println("There are no zones with more lines than specified.");
+			return;
+		}
+		
+		System.out.println("(" + size + ") zones with more than " + numLines + " lines:");
+		for(ServiceZone current : zones) {
+			System.out.println("Name: " + current.getName());
+			System.out.println("Avg. Consumption: " + current.getAvgConsumption());
+			System.out.println("Num. Consumers: " + current.getNumConsumers());
+			System.out.println("");
+		}
+	}
+
+	// TODO: FALTA PROBAR
+	private void searchDistributorsSolarThermalMenu() {
+		ArrayList<Distributor> distributors = plantControl.getSolarThermalDistributors();
+		int size = distributors.size();
+		if(size == 0) {
+			System.out.println("There are no zones with more lines than specified.");
+			return;
+		}
+		
+		System.out.println("(" + size + ") distributors: ");
+		for(Distributor current : distributors) {
+			System.out.println("Name: " + current.getName());
+		}
+	}
+	
+	// TODO: FALTA PROBAR
+	private void searchDeliveriesNuclearPlantsMenu() {
+		System.out.println("Type the vo. of produced waste:");
+		double waste;
+		try {
+			waste = Double.parseDouble(scanner.nextLine());
+		} catch (NumberFormatException e) {
+			System.out.println("Number format not correct!");
+			System.out.println("Operation cancelled.");
+			return;
+		}
+		
+		Date date;
+		System.out.println("Type the date (dd-mm-yyyy): ");
+		try {
+			date = dateFormat.parse(scanner.nextLine());
+		} catch (ParseException e) {
+			System.out.println("Date format not correct!");
+			System.out.println("Operation cancelled.");
+			return;
+		}
+		
+		ArrayList<Delivery> deliveries = plantControl.getDeliveriesByWasteAndDate(waste, date);
+		int size = deliveries.size();
+		if(size == 0) {
+			System.out.println("There are no zones with more lines than specified.");
+			return;
+		}
+		
+		System.out.println("(" + size + ") deliveries found: ");
+		for(Delivery current : deliveries) {
+			System.out.println(current.toString());
+		}
 	}
 
 }
