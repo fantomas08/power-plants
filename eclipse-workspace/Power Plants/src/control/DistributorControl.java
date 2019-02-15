@@ -32,12 +32,7 @@ public class DistributorControl extends Control {
 
 	public void deleteNetwork(DistributionNetwork network, Distributor distributor) {
 		distributor.getNetworks().remove(network);
-		if (!network.getLines().isEmpty()) {
-			for (DistributionLine line : network.getLines()) {
-				getOdb().delete(line);
-			}
-		}
-		getOdb().delete(network);
+		getOdb().deleteCascade(network);
 	}
 
 	public void deleteLine(DistributionLine line, DistributionNetwork network) {
@@ -46,17 +41,7 @@ public class DistributorControl extends Control {
 	}
 
 	public void deleteDistributor(Distributor distributor) {
-		if (!distributor.getNetworks().isEmpty()) {
-			for (DistributionNetwork network : distributor.getNetworks()) {
-				if (!network.getLines().isEmpty()) {
-					for (DistributionLine line : network.getLines()) {
-						getOdb().delete(line);
-					}
-				}
-				getOdb().delete(network);
-			}
-		}
-		getOdb().delete(distributor);
+		getOdb().deleteCascade(distributor);
 	}
 	
 	public Objects<Distributor> getDistributors() {

@@ -822,28 +822,30 @@ public class Menu {
 	private void updateDistributorMenu() {
 		Distributor distributor = selectDistributor();
 
-		System.out.println("1) Add new distribution network\n" + "2) Add new distribution line\n"
-				+ "3) Delete distribution network\n" + "4) Delete distribution line\n" + "5) Delete distributor");
-		String option = scanner.nextLine();
-		switch (option) {
-		case "1":
-			addNetwork(distributor);
-			break;
-		case "2":
-			addLine(distributor);
-			break;
-		case "3":
-			deleteNetwork(distributor);
-			break;
-		case "4":
-			deleteLine(distributor);
-			break;
-		case "5":
-			deleteDistributor(distributor);
-			break;
-		default:
-			System.out.println("Incorrect option!");
-			break;
+		if (distributor != null) {
+			System.out.println("1) Add new distribution network\n" + "2) Add new distribution line\n"
+					+ "3) Delete distribution network\n" + "4) Delete distribution line\n" + "5) Delete distributor");
+			String option = scanner.nextLine();
+			switch (option) {
+			case "1":
+				addNetwork(distributor);
+				break;
+			case "2":
+				addLine(distributor);
+				break;
+			case "3":
+				deleteNetwork(distributor);
+				break;
+			case "4":
+				deleteLine(distributor);
+				break;
+			case "5":
+				deleteDistributor(distributor);
+				break;
+			default:
+				System.out.println("Incorrect option!");
+				break;
+			}
 		}
 	}
 
@@ -854,38 +856,45 @@ public class Menu {
 
 	private void addLine(Distributor distributor) {
 		DistributionNetwork network = selectDistributionNetwork(distributor);
-		distributorControl.addLine(network);
-		System.out.println("Empty line added successfully");
+		if (network != null) {
+			distributorControl.addLine(network);
+			System.out.println("Empty line added successfully");
+		}
 	}
 
 	private void deleteLine(Distributor distributor) {
 		DistributionNetwork network = selectDistributionNetwork(distributor);
-		DistributionLine line = selectDistributionLine(network);
-		distributorControl.deleteLine(line, network);
-		System.out.println("Line deleted successfully");
+		if (network != null) {
+			DistributionLine line = selectDistributionLine(network);
+			if (line != null) {
+				distributorControl.deleteLine(line, network);
+				System.out.println("Line deleted successfully");
+			}
+		}
 	}
 
 	private void deleteNetwork(Distributor distributor) {
 		DistributionNetwork network = selectDistributionNetwork(distributor);
 
-		if (!network.getLines().isEmpty()) {
-			System.out.println("Atention! \nNetwork contain elements. Continue(y/n)");
-			String option = scanner.nextLine();
-			while (!option.equals("y") && !option.equals("n")) {
-				System.out.println("Invalid option");
+		if (network != null) {
+			if (!network.getLines().isEmpty()) {
+				System.out.println("Atention! \nNetwork contain elements. Continue(y/n)");
+				String option = scanner.nextLine();
+				while (!option.equals("y") && !option.equals("n")) {
+					System.out.println("Invalid option");
+				}
+				if (option.equals("y")) {
+					distributorControl.deleteNetwork(network, distributor);
+					System.out.println("Network deleted successfully");
+					return;
+				} else {
+					System.out.println("Operation cancelled");
+					return;
+				}
 			}
-			if (option.equals("y")) {
-				distributorControl.deleteNetwork(network, distributor);
-				System.out.println("Network deleted successfully");
-				return;
-			} else {
-				System.out.println("Operation cancelled");
-				return;
-			}
+			distributorControl.deleteNetwork(network, distributor);
+			System.out.println("Network deleted successfully");
 		}
-		distributorControl.deleteNetwork(network, distributor);
-		System.out.println("Network deleted successfully");
-		return;
 	}
 
 	private void deleteDistributor(Distributor distributor) {
@@ -901,12 +910,15 @@ public class Menu {
 			} else {
 				System.out.println("Operation cancelled");
 			}
+		} else {
+			distributorControl.deleteDistributor(distributor);
+			System.out.println("Distributor deleted successfully");
 		}
 	}
 
 	// add service zone
 	private void addServiceZoneMenu() {
-		ServiceZone newZone = null;
+		ServiceZone newZone = new ServiceZone(null, 0, 0, null);
 
 		System.out.println("Type new service zone name");
 		String name = scanner.nextLine().trim();
@@ -947,26 +959,29 @@ public class Menu {
 	// update service zone
 	private void updateZoneMenu() {
 		ServiceZone zone = selectServiceZone();
-		System.out.println("1) Modify average consumption\n" + "2) Modify consumers number\n"
-				+ "3) Register new distribution line\n" + "4) Remove existing distribution line\n");
-		String option = scanner.nextLine();
+		
+		if (zone != null) {
+			System.out.println("1) Modify average consumption\n" + "2) Modify consumers number\n"
+					+ "3) Register new distribution line\n" + "4) Remove existing distribution line\n");
+			String option = scanner.nextLine();
 
-		switch (option) {
-		case "1":
-			updateAvgConsumption(zone);
-			break;
-		case "2":
-			updateNumConsumers(zone);
-			break;
-		case "3":
-			registerDistributionLine(zone);
-			break;
-		case "4":
-			removeDistributionLine(zone);
-			break;
-		default:
-			System.out.println("Invalid option");
-			break;
+			switch (option) {
+			case "1":
+				updateAvgConsumption(zone);
+				break;
+			case "2":
+				updateNumConsumers(zone);
+				break;
+			case "3":
+				registerDistributionLine(zone);
+				break;
+			case "4":
+				removeDistributionLine(zone);
+				break;
+			default:
+				System.out.println("Invalid option");
+				break;
+			}
 		}
 	}
 
@@ -1000,18 +1015,53 @@ public class Menu {
 
 	private void registerDistributionLine(ServiceZone zone) {
 		Distributor distributor = selectDistributor();
-		DistributionNetwork network = selectDistributionNetwork(distributor);
-		DistributionLine line = selectDistributionLine(network);
-		serviceZoneControl.registerDistributionLine(zone, line);
-		System.out.println("Distribution line added");
+		if (distributor != null) {
+			DistributionNetwork network = selectDistributionNetwork(distributor);
+			if (network != null) {
+				DistributionLine line = selectDistributionLine(network);
+				if (line != null) {
+					if (!line.getZones().isEmpty()) {
+						for (ServiceZone z : line.getZones()) {
+							if (z.equals(zone)) {
+								System.out.println("This line already registered for that zone \nOperation cancelled");
+							} else {
+								serviceZoneControl.registerDistributionLine(zone, line);
+								System.out.println("Distribution line added");
+							}
+						}
+					} else {
+						serviceZoneControl.registerDistributionLine(zone, line);
+						System.out.println("Distribution line added");
+					}
+				}
+			}
+		}
 	}
 
 	private void removeDistributionLine(ServiceZone zone) {
 		Distributor distributor = selectDistributor();
-		DistributionNetwork network = selectDistributionNetwork(distributor);
-		DistributionLine line = selectDistributionLine(network);
-		serviceZoneControl.deleteDistributionLine(zone, line);
-		System.out.println("Distribution line removed");
+		if (distributor != null) {
+			DistributionNetwork network = selectDistributionNetwork(distributor);
+			if (network != null) {
+				DistributionLine line = selectDistributionLine(network);
+				if (line != null) {
+					if (!line.getZones().isEmpty()) {
+						for (ServiceZone z : line.getZones()) {
+							if (z.equals(zone)) {
+								serviceZoneControl.deleteDistributionLine(zone, line);
+								System.out.println("Distribution line removed");
+								return;
+							} else {
+								System.out.println("This line is not registered \nOperation cancelled");
+								return;
+							}
+						}
+					} else {
+						System.out.println("This line don't have any zone registered \nOperation cancelled");
+					}
+				}
+			}
+		}
 	}
 
 	// Private Methods
@@ -1019,26 +1069,33 @@ public class Menu {
 		int i = 0;
 		int index = 1;
 		Objects<ServiceZone> zones = serviceZoneControl.getServiceZones();
-		ArrayList list = new ArrayList();
 
 		System.out.println("Select the service zone");
 		while (zones.hasNext()) {
 			ServiceZone zone = zones.next();
-			list.add(zone);
 			System.out.println((i + 1) + ") " + zone.toString());
 			++i;
 		}
+		zones.reset();
 		try {
 			index = Integer.parseInt(scanner.nextLine().trim());
 		} catch (NumberFormatException e) {
 			System.out.println("Please type a number\nOperation cancelled");
 			return null;
 		}
-		if (index >= list.size() - 1 || index <= 0) {
+		if (index > zones.size() || index <= 0) {
 			System.out.println("Invalid Option\nOperation cancelled");
 			return null;
 		}
-		return (ServiceZone) list.get(index - 1);
+		i = 0;
+		while (zones.hasNext()) {
+			if (index == i + 1) {
+				return zones.next();
+			}
+			zones.next();
+			++i;
+		}
+		return null;
 	}
 
 	private DistributionNetwork selectDistributionNetwork(Distributor distributor) {
@@ -1055,7 +1112,7 @@ public class Menu {
 			System.out.println("Please type a number\nOperation cancelled");
 			return null;
 		}
-		if (index >= networks.size() - 1 || index <= 0) {
+		if (index > networks.size() || index <= 0) {
 			System.out.println("Invalid Option\nOperation cancelled");
 			return null;
 		}
@@ -1076,7 +1133,7 @@ public class Menu {
 			System.out.println("Please type a number\nOperation cancelled");
 			return null;
 		}
-		if (index >= lines.size() - 1 || index <= 0) {
+		if (index > lines.size() || index <= 0) {
 			System.out.println("Invalid Option\nOperation cancelled");
 			return null;
 		}
@@ -1087,26 +1144,33 @@ public class Menu {
 		int i = 0;
 		int index = 1;
 		Objects<Distributor> distributors = distributorControl.getDistributors();
-		ArrayList list = new ArrayList();
 
 		System.out.println("Select the distributor");
 		while (distributors.hasNext()) {
 			Distributor distributor = distributors.next();
-			list.add(distributor);
 			System.out.println((i + 1) + ") " + distributor.toString());
 			++i;
 		}
+		distributors.reset();
 		try {
 			index = Integer.parseInt(scanner.nextLine().trim());
 		} catch (NumberFormatException e) {
 			System.out.println("Please type a number\nOperation cancelled");
 			return null;
 		}
-		if (index >= list.size() - 1 || index <= 0) {
+		if (index > distributors.size() || index <= 0) {
 			System.out.println("Invalid Option\nOperation cancelled");
 			return null;
 		}
-		return (Distributor) list.get(i - 1);
+		i = 0;
+		while (distributors.hasNext()) {
+			if (index == i + 1) {
+				return distributors.next();
+			}
+			distributors.next();
+			++i;
+		}
+		return null;
 	}
 
 	// Consults
