@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 import org.neodatis.odb.Objects;
@@ -12,11 +13,12 @@ import org.neodatis.odb.core.query.criteria.Where;
 import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
 
 import control.Control;
-import control.DistributionLineControl;
 import control.DistributorControl;
 import control.PlantControl;
 import control.ServiceZoneControl;
 import entities.Delivery;
+import entities.DistributionLine;
+import entities.DistributionNetwork;
 import entities.Distributor;
 import entities.HydraulicPlant;
 import entities.NuclearPlant;
@@ -35,10 +37,9 @@ public class Menu {
 	private PlantControl plantControl;
 	private DistributorControl distributorControl;
 	private ServiceZoneControl serviceZoneControl;
-	private DistributionLineControl distributionLineControl;
 
 	public Menu(PlantControl plantControl, DistributorControl distributorControl,
-			ServiceZoneControl serviceZoneControl, DistributionLineControl distributionLineControl) {
+			ServiceZoneControl serviceZoneControl) {
 		this.plantControl = plantControl;
 		this.distributorControl = distributorControl;
 		this.serviceZoneControl = serviceZoneControl;
@@ -76,16 +77,16 @@ public class Menu {
 				menuUpdatePlant();
 				break;
 			case "3":
-
+				addDistributorMenu();
 				break;
 			case "4":
-
+				updateDistributorMenu();
 				break;
 			case "5":
-
+				addServiceZoneMenu();
 				break;
 			case "6":
-
+				updateZoneMenu();
 				break;
 			case "7":
 				addDeliveryMenu();
@@ -224,7 +225,7 @@ public class Menu {
 		if (plantType == SolarPlant.class) {
 			double solarPanelSurface, yearlyAvgSunHours;
 			PanelType panelType;
-			
+
 			System.out.println("Type the panel's surface area:");
 			try {
 				solarPanelSurface = Double.parseDouble(scanner.nextLine());
@@ -273,7 +274,7 @@ public class Menu {
 		if (plantType == NuclearPlant.class) {
 			int numReactors;
 			double volConsumedPlutonium, volProducedWaste;
-			
+
 			System.out.println("Type the num. reactors:");
 			try {
 				numReactors = Integer.parseInt(scanner.nextLine());
@@ -312,7 +313,7 @@ public class Menu {
 		if (plantType == ThermalPlant.class) {
 			int numFurnaces;
 			double volConsumedCarbon, volGasEmissions;
-			
+
 			System.out.println("Type the num. of furances:");
 			try {
 				numFurnaces = Integer.parseInt(scanner.nextLine());
@@ -542,7 +543,7 @@ public class Menu {
 					break;
 				}
 			} while (choice != 4);
-		} 
+		}
 		// UPDATE NUCLEAR PLANT
 		if (wantedPlant.getClass() == NuclearPlant.class) {
 			wantedPlant = (NuclearPlant) wantedPlant;
@@ -700,7 +701,7 @@ public class Menu {
 			System.out.println(i + ") " + objects.next().toString());
 			++i;
 		}
-		
+
 		System.out.println("Type the power plant delivering the power: ");
 		int choice;
 		try {
@@ -715,7 +716,7 @@ public class Menu {
 			System.out.println("Operation cancelled.");
 			return;
 		}
-		
+
 		i = 1;
 		objects.reset();
 		while (i <= choice && objects.hasNext()) {
@@ -729,6 +730,7 @@ public class Menu {
 			return;
 		}
 
+		//
 		Objects<Distributor> distributors = distributorControl.getDistributors();
 		size = distributors.size();
 		if (size == 0) {
@@ -741,7 +743,7 @@ public class Menu {
 			System.out.println(i + ") " + distributors.next().toString());
 			++i;
 		}
-		
+
 		System.out.println("Type the distributor who gets the power delivered: ");
 		try {
 			choice = Integer.parseInt(scanner.nextLine());
@@ -755,7 +757,7 @@ public class Menu {
 			System.out.println("Operation cancelled.");
 			return;
 		}
-		
+
 		i = 1;
 		distributors.reset();
 		while (i <= choice && distributors.hasNext()) {
@@ -796,70 +798,314 @@ public class Menu {
 
 	// Parte Yevgeny
 
-	//
-	public void addDistributorMenu() {
+	// add distributor
+	private void addDistributorMenu() {
 		System.out.println("Type new distributor name");
 		String name = scanner.nextLine();
 
-		if (distributorControl.distributorExists(name)) {
-			distributorControl.addDistributor(new Distributor(name, new ArrayList()));
+		if (distributorControl.findDistributor(name) == null && !name.equals("")) {
+			distributorControl.addDistributor(new Distributor(name, new ArrayList<DistributionNetwork>()));
 			System.out.println("Distributor added successfully!");
 		} else {
-			System.out.println("There is already a distributor with that name!");
+			System.out.println("There is already a distributor with that name or its empty");
 			System.out.println("Operation cancelled.");
 		}
 	}
 
-	public void updateDistributorMenu() {
+	// update distributor
+	private void updateDistributorMenu() {
+		Distributor distributor = selectDistributor();
+
 		System.out.println("1) Add new distribution network\n" + "2) Add new distribution line\n"
 				+ "3) Delete distribution network\n" + "4) Delete distribution line\n" + "5) Delete distributor");
-
 		String option = scanner.nextLine();
 		switch (option) {
 		case "1":
-
+			addNetwork(distributor);
 			break;
 		case "2":
-
+			addLine(distributor);
 			break;
 		case "3":
-
+			deleteNetwork(distributor);
 			break;
 		case "4":
-
+			deleteLine(distributor);
 			break;
 		case "5":
-
+			deleteDistributor(distributor);
 			break;
-
 		default:
 			System.out.println("Incorrect option!");
 			break;
 		}
 	}
-	
-	public void addNetworkMenu() {
-		Objects<Distributor> distributors = distributorControl.getDistributors();
+
+	private void addNetwork(Distributor distributor) {
+		distributorControl.addNetwork(distributor);
+		System.out.println("Empty network added successfully");
+	}
+
+	private void addLine(Distributor distributor) {
+		DistributionNetwork network = selectDistributionNetwork(distributor);
+		distributorControl.addLine(network);
+		System.out.println("Empty line added successfully");
+	}
+
+	private void deleteLine(Distributor distributor) {
+		DistributionNetwork network = selectDistributionNetwork(distributor);
+		DistributionLine line = selectDistributionLine(network);
+		distributorControl.deleteLine(line, network);
+		System.out.println("Line deleted successfully");
+	}
+
+	private void deleteNetwork(Distributor distributor) {
+		DistributionNetwork network = selectDistributionNetwork(distributor);
+
+		if (!network.getLines().isEmpty()) {
+			System.out.println("Atention! \nNetwork contain elements. Continue(y/n)");
+			String option = scanner.nextLine();
+			while (!option.equals("y") && !option.equals("n")) {
+				System.out.println("Invalid option");
+			}
+			if (option.equals("y")) {
+				distributorControl.deleteNetwork(network, distributor);
+				System.out.println("Network deleted successfully");
+				return;
+			} else {
+				System.out.println("Operation cancelled");
+				return;
+			}
+		}
+		distributorControl.deleteNetwork(network, distributor);
+		System.out.println("Network deleted successfully");
+		return;
+	}
+
+	private void deleteDistributor(Distributor distributor) {
+		if (!distributor.getNetworks().isEmpty()) {
+			System.out.println("Atention! \nDistributor contain elements. Continue(y/n)");
+			String option = scanner.nextLine();
+			while (!option.equals("y") && !option.equals("n")) {
+				System.out.println("Invalid option");
+			}
+			if (option.equals("y")) {
+				distributorControl.deleteDistributor(distributor);
+				System.out.println("Distributor deleted successfully");
+			} else {
+				System.out.println("Operation cancelled");
+			}
+		}
+	}
+
+	// add service zone
+	private void addServiceZoneMenu() {
+		ServiceZone newZone = null;
+
+		System.out.println("Type new service zone name");
+		String name = scanner.nextLine().trim();
+		if (name.equals("") || serviceZoneControl.findServiceZone(name) != null) {
+			System.out.println("Name already exissts or its empty \ntry again");
+			return;
+		} else {
+			newZone.setName(name);
+		}
+
+		System.out.println("Type number of consumers for new service zone");
+		int numConsumers;
+		try {
+			numConsumers = Integer.parseInt(scanner.nextLine().trim());
+		} catch (NumberFormatException e) {
+			System.out.println("Please type a number\nOperation cancelled");
+			return;
+		}
+		newZone.setNumConsumers(numConsumers);
+
+		System.out.println("Type province for new service zone");
+		newZone.setProvince(scanner.nextLine());
+
+		System.out.println("Type average consumption for new service zone");
+		double avgConsumption;
+		try {
+			avgConsumption = Double.parseDouble(scanner.nextLine().trim());
+		} catch (NumberFormatException e) {
+			System.out.println("Please type a number\nOperation cancelled");
+			return;
+		}
+		newZone.setAvgConsumption(avgConsumption);
+
+		serviceZoneControl.addZone(newZone);
+		System.out.println("New Service Zone added successully");
+	}
+
+	// update service zone
+	private void updateZoneMenu() {
+		ServiceZone zone = selectServiceZone();
+		System.out.println("1) Modify average consumption\n" + "2) Modify consumers number\n"
+				+ "3) Register new distribution line\n" + "4) Remove existing distribution line\n");
+		String option = scanner.nextLine();
+
+		switch (option) {
+		case "1":
+			updateAvgConsumption(zone);
+			break;
+		case "2":
+			updateNumConsumers(zone);
+			break;
+		case "3":
+			registerDistributionLine(zone);
+			break;
+		case "4":
+			removeDistributionLine(zone);
+			break;
+		default:
+			System.out.println("Invalid option");
+			break;
+		}
+	}
+
+	private void updateNumConsumers(ServiceZone zone) {
+		System.out.println("Type number of consumers for the service zone");
+		int numConsumers;
+		try {
+			numConsumers = Integer.parseInt(scanner.nextLine().trim());
+		} catch (NumberFormatException e) {
+			System.out.println("Please type a number\nOperation cancelled");
+			return;
+		}
+		zone.setNumConsumers(numConsumers);
+		serviceZoneControl.addZone(zone);
+		System.out.println("Update complete");
+	}
+
+	private void updateAvgConsumption(ServiceZone zone) {
+		System.out.println("Type average consumption for the service zone");
+		double avgConsumption;
+		try {
+			avgConsumption = Double.parseDouble(scanner.nextLine().trim());
+		} catch (NumberFormatException e) {
+			System.out.println("Please type a number\nOperation cancelled");
+			return;
+		}
+		zone.setAvgConsumption(avgConsumption);
+		serviceZoneControl.addZone(zone);
+		System.out.println("Update complete");
+	}
+
+	private void registerDistributionLine(ServiceZone zone) {
+		Distributor distributor = selectDistributor();
+		DistributionNetwork network = selectDistributionNetwork(distributor);
+		DistributionLine line = selectDistributionLine(network);
+		serviceZoneControl.registerDistributionLine(zone, line);
+		System.out.println("Distribution line added");
+	}
+
+	private void removeDistributionLine(ServiceZone zone) {
+		Distributor distributor = selectDistributor();
+		DistributionNetwork network = selectDistributionNetwork(distributor);
+		DistributionLine line = selectDistributionLine(network);
+		serviceZoneControl.deleteDistributionLine(zone, line);
+		System.out.println("Distribution line removed");
+	}
+
+	// Private Methods
+	private ServiceZone selectServiceZone() {
+		int i = 0;
+		int index = 1;
+		Objects<ServiceZone> zones = serviceZoneControl.getServiceZones();
 		ArrayList list = new ArrayList();
-		int i = 0, j = 0;
-		
-		while (distributors.hasNext()) {
-			list.add(distributors.next());
-			System.out.println((i + 1) + ")\t" + list.get(i).toString());
+
+		System.out.println("Select the service zone");
+		while (zones.hasNext()) {
+			ServiceZone zone = zones.next();
+			list.add(zone);
+			System.out.println((i + 1) + ") " + zone.toString());
 			++i;
 		}
-		System.out.println("Select the distributor");
-		String index = scanner.nextLine();
 		try {
-			j = Integer.parseInt(index);
-		} catch(NumberFormatException e) {
-			System.out.println("Incorrect option!");
+			index = Integer.parseInt(scanner.nextLine().trim());
+		} catch (NumberFormatException e) {
+			System.out.println("Please type a number\nOperation cancelled");
+			return null;
 		}
-		
+		if (index >= list.size() - 1 || index <= 0) {
+			System.out.println("Invalid Option\nOperation cancelled");
+			return null;
+		}
+		return (ServiceZone) list.get(index - 1);
 	}
-	
+
+	private DistributionNetwork selectDistributionNetwork(Distributor distributor) {
+		List<DistributionNetwork> networks = distributor.getNetworks();
+		int index = 1;
+
+		System.out.println("Select the network");
+		for (int i = 0; i < networks.size(); ++i) {
+			System.out.println((i + 1) + ") " + networks.get(i).toString());
+		}
+		try {
+			index = Integer.parseInt(scanner.nextLine().trim());
+		} catch (NumberFormatException e) {
+			System.out.println("Please type a number\nOperation cancelled");
+			return null;
+		}
+		if (index >= networks.size() - 1 || index <= 0) {
+			System.out.println("Invalid Option\nOperation cancelled");
+			return null;
+		}
+		return networks.get(index - 1);
+	}
+
+	private DistributionLine selectDistributionLine(DistributionNetwork network) {
+		List<DistributionLine> lines = network.getLines();
+		int index = 1;
+
+		System.out.println("Select the line");
+		for (int i = 0; i < lines.size(); ++i) {
+			System.out.println((i + 1) + ") " + lines.get(i).toString());
+		}
+		try {
+			index = Integer.parseInt(scanner.nextLine().trim());
+		} catch (NumberFormatException e) {
+			System.out.println("Please type a number\nOperation cancelled");
+			return null;
+		}
+		if (index >= lines.size() - 1 || index <= 0) {
+			System.out.println("Invalid Option\nOperation cancelled");
+			return null;
+		}
+		return lines.get(index - 1);
+	}
+
+	private Distributor selectDistributor() {
+		int i = 0;
+		int index = 1;
+		Objects<Distributor> distributors = distributorControl.getDistributors();
+		ArrayList list = new ArrayList();
+
+		System.out.println("Select the distributor");
+		while (distributors.hasNext()) {
+			Distributor distributor = distributors.next();
+			list.add(distributor);
+			System.out.println((i + 1) + ") " + distributor.toString());
+			++i;
+		}
+		try {
+			index = Integer.parseInt(scanner.nextLine().trim());
+		} catch (NumberFormatException e) {
+			System.out.println("Please type a number\nOperation cancelled");
+			return null;
+		}
+		if (index >= list.size() - 1 || index <= 0) {
+			System.out.println("Invalid Option\nOperation cancelled");
+			return null;
+		}
+		return (Distributor) list.get(i - 1);
+	}
+
+	// Consults
 	private void printSearchMenu() {
-		if(searchMenu == null) {
+		if (searchMenu == null) {
 			searchMenu = "Available queries:\n";
 			searchMenu += "1) Search for plants opened before date\n";
 			searchMenu += "2) Search for service zones by number of distribution lines\n";
@@ -868,7 +1114,7 @@ public class Menu {
 		}
 		System.out.println(searchMenu);
 	}
-	
+
 	private void searchMenu() {
 		printSearchMenu();
 		switch (scanner.nextLine()) {
@@ -889,7 +1135,7 @@ public class Menu {
 			break;
 		}
 	}
-	
+
 	private void searchPlantsDateMenu() {
 		Date date;
 		System.out.println("Type the date (dd-mm-yyyy): ");
@@ -900,16 +1146,16 @@ public class Menu {
 			System.out.println("Operation cancelled.");
 			return;
 		}
-		
+
 		ArrayList<Plant> plants = plantControl.getPlantsBeforeDate(date);
 		int size = plants.size();
-		if(plants == null || size == 0) {
+		if (plants == null || size == 0) {
 			System.out.println("There are no plants opened before that date.");
 			return;
 		}
-		
+
 		System.out.println("(" + size + ") plants opened before " + date.toString() + ": ");
-		for(Plant plant : plants) {
+		for (Plant plant : plants) {
 			System.out.println("Name: " + plant.getName());
 			System.out.println("Type: " + PlantTypeParser.parseType(plant.getClass()));
 			System.out.println("Avg. production: " + plant.getAvgProduction());
@@ -918,7 +1164,7 @@ public class Menu {
 			System.out.println("");
 		}
 	}
-	
+
 	// TODO: FALTA PROBAR
 	private void searchZonesNumLinesMenu() {
 		System.out.println("Type the minimum number of lines (not including): ");
@@ -930,18 +1176,17 @@ public class Menu {
 			System.out.println("Operation cancelled.");
 			return;
 		}
-		
-		ArrayList<ServiceZone> zones = serviceZoneControl.getZonesNumLines(numLines,
-				distributionLineControl);
-		
+
+		ArrayList<ServiceZone> zones = serviceZoneControl.getZonesNumLines(numLines, distributorControl);
+
 		int size = zones.size();
-		if(size == 0) {
+		if (size == 0) {
 			System.out.println("There are no zones with more lines than specified.");
 			return;
 		}
-		
+
 		System.out.println("(" + size + ") zones with more than " + numLines + " lines:");
-		for(ServiceZone current : zones) {
+		for (ServiceZone current : zones) {
 			System.out.println("Name: " + current.getName());
 			System.out.println("Avg. Consumption: " + current.getAvgConsumption());
 			System.out.println("Num. Consumers: " + current.getNumConsumers());
@@ -953,17 +1198,17 @@ public class Menu {
 	private void searchDistributorsSolarThermalMenu() {
 		ArrayList<Distributor> distributors = plantControl.getSolarThermalDistributors();
 		int size = distributors.size();
-		if(size == 0) {
+		if (size == 0) {
 			System.out.println("There are no zones with more lines than specified.");
 			return;
 		}
-		
+
 		System.out.println("(" + size + ") distributors: ");
-		for(Distributor current : distributors) {
+		for (Distributor current : distributors) {
 			System.out.println("Name: " + current.getName());
 		}
 	}
-	
+
 	// TODO: FALTA PROBAR
 	private void searchDeliveriesNuclearPlantsMenu() {
 		System.out.println("Type the vo. of produced waste:");
@@ -975,7 +1220,7 @@ public class Menu {
 			System.out.println("Operation cancelled.");
 			return;
 		}
-		
+
 		Date date;
 		System.out.println("Type the date (dd-mm-yyyy): ");
 		try {
@@ -985,16 +1230,16 @@ public class Menu {
 			System.out.println("Operation cancelled.");
 			return;
 		}
-		
+
 		ArrayList<Delivery> deliveries = plantControl.getDeliveriesByWasteAndDate(waste, date);
 		int size = deliveries.size();
-		if(size == 0) {
+		if (size == 0) {
 			System.out.println("There are no zones with more lines than specified.");
 			return;
 		}
-		
+
 		System.out.println("(" + size + ") deliveries found: ");
-		for(Delivery current : deliveries) {
+		for (Delivery current : deliveries) {
 			System.out.println(current.toString());
 		}
 	}

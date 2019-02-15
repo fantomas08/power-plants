@@ -3,8 +3,10 @@ package control;
 import java.util.ArrayList;
 
 import org.neodatis.odb.Objects;
+import org.neodatis.odb.core.query.IQuery;
 import org.neodatis.odb.core.query.criteria.ICriterion;
 import org.neodatis.odb.core.query.criteria.Where;
+import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
 
 import entities.DistributionLine;
 import entities.ServiceZone;
@@ -33,7 +35,7 @@ public class ServiceZoneControl extends Control {
 		return getOdb().getObjects(ServiceZone.class);
 	}
 	
-	public ArrayList<ServiceZone> getZonesNumLines(int num, DistributionLineControl control) {
+	public ArrayList<ServiceZone> getZonesNumLines(int num, DistributorControl control) {
 		Objects<DistributionLine> objects = control.getDistributionLines();
 		ArrayList<ZoneLineCounter> lineCounters = new ArrayList<ZoneLineCounter>();
 		boolean foundCounter = false;
@@ -68,5 +70,14 @@ public class ServiceZoneControl extends Control {
 			}
 		}
 		return zones;
+	}
+	
+	public ServiceZone findServiceZone(String name) {
+		IQuery q = new CriteriaQuery(ServiceZone.class, Where.equal("name", name));
+		Objects<ServiceZone> zones = getOdb().getObjects(q);
+		if (!zones.isEmpty()) {
+			return zones.getFirst();
+		}
+		return null;
 	}
 }

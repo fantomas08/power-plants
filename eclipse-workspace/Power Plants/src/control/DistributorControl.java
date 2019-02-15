@@ -1,5 +1,6 @@
 package control;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.neodatis.odb.Objects;
@@ -19,17 +20,16 @@ public class DistributorControl extends Control {
 		getOdb().store(distributor);
 	}
 
-	public void addNetwork(Distributor distributor, DistributionNetwork network) {
-		distributor.getNetworks().add(network);
+	public void addNetwork(Distributor distributor) {
+		distributor.getNetworks().add(new DistributionNetwork(new ArrayList<DistributionLine>()));
 		getOdb().store(distributor);
 	}
 
-	public void addLine(DistributionLine line, DistributionNetwork network) {
-		network.getLines().add(line);
+	public void addLine(DistributionNetwork network) {
+		network.getLines().add(new DistributionLine(new ArrayList<ServiceZone>()));
 		getOdb().store(network);
 	}
 
-	// 
 	public void deleteNetwork(DistributionNetwork network, Distributor distributor) {
 		distributor.getNetworks().remove(network);
 		if (!network.getLines().isEmpty()) {
@@ -40,13 +40,11 @@ public class DistributorControl extends Control {
 		getOdb().delete(network);
 	}
 
-	// 
 	public void deleteLine(DistributionLine line, DistributionNetwork network) {
 		network.getLines().remove(line);
 		getOdb().delete(line);
 	}
 
-	// 
 	public void deleteDistributor(Distributor distributor) {
 		if (!distributor.getNetworks().isEmpty()) {
 			for (DistributionNetwork network : distributor.getNetworks()) {
@@ -60,7 +58,7 @@ public class DistributorControl extends Control {
 		}
 		getOdb().delete(distributor);
 	}
-
+	
 	public Objects<Distributor> getDistributors() {
 		return getOdb().getObjects(Distributor.class);
 	}
@@ -73,12 +71,13 @@ public class DistributorControl extends Control {
 		return getOdb().getObjects(DistributionLine.class);
 	}
 	
-	public boolean distributorExists(String name) {
-		IQuery query = new CriteriaQuery(Distributor.class, Where.equal("name", name));
-		Objects<Distributor> distributors = getOdb().getObjects(query);
-		if (distributors.hasNext()) {
-			return true;
+	public Distributor findDistributor(String name) {
+		IQuery q = new CriteriaQuery(Distributor.class, Where.equal("name", name));
+		Objects<Distributor> distributors = getOdb().getObjects(q);
+		if (!distributors.isEmpty()) {
+			return distributors.getFirst();
 		}
-		return false;
+		return null;
 	}
 }
+
