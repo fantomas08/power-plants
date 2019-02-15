@@ -88,5 +88,14 @@ public class PlantControl extends Control {
 		return deliveries;
 	}
 	
+	public boolean plantExists(String name) {
+		Objects<NuclearPlant> objects = getOdb().getObjects(new CriteriaQuery(HydraulicPlant.class, Where.equal("name", name)));
+		objects.addAll(getOdb().getObjects(new CriteriaQuery(SolarPlant.class, Where.equal("name", name))));
+		objects.addAll(getOdb().getObjects(new CriteriaQuery(NuclearPlant.class, Where.equal("name", name))));
+		objects.addAll(getOdb().getObjects(new CriteriaQuery(ThermalPlant.class, Where.equal("name", name))));
+		
+		return objects.size() > 0;
+	}
+	
 	
 }

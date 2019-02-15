@@ -156,6 +156,12 @@ public class Menu {
 			System.out.println("Operation cancelled.");
 			return;
 		}
+		
+		if(plantControl.plantExists(name)) {
+			System.out.println("A plant with that name already exists!");
+			System.out.println("Operation cancelled.");
+			return;
+		}
 
 		System.out.println("Type the avg. production:");
 		try {
