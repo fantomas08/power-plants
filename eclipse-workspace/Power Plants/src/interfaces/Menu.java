@@ -685,7 +685,6 @@ public class Menu {
 	// END Update Plants
 
 	// START Add Delivery
-	// TODO: FALTA PROBAR
 	private void addDeliveryMenu() {
 		Plant plant = null;
 		Distributor distributor = null;
@@ -733,8 +732,7 @@ public class Menu {
 			System.out.println("---ERROR: Plant not found after choice!");
 			return;
 		}
-
-		//
+		
 		Objects<Distributor> distributors = distributorControl.getDistributors();
 		size = distributors.size();
 		if (size == 0) {
@@ -893,8 +891,7 @@ public class Menu {
 			System.out.println("");
 		}
 	}
-
-	// TODO: FALTA PROBAR
+	
 	private void searchDistributorsSolarThermalMenu() {
 		ArrayList<Distributor> distributors = plantControl.getSolarThermalDistributors();
 		int size = distributors.size();
@@ -908,8 +905,7 @@ public class Menu {
 			System.out.println("Name: " + current.getName());
 		}
 	}
-
-	// TODO: FALTA PROBAR
+	
 	private void searchDeliveriesNuclearPlantsMenu() {
 		System.out.println("Type the vol. of produced waste (more than):");
 		double waste;
