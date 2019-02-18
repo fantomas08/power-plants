@@ -1195,6 +1195,12 @@ public class Menu {
 		int i = 0;
 		int index = 1;
 		Objects<ServiceZone> zones = serviceZoneControl.getServiceZones();
+		
+		if(zones.size() == 0) {
+			System.out.println("There are no zones available");
+			System.out.println("Operation cancelled.");
+			return null;
+		}
 
 		System.out.println("Select the service zone");
 		while (zones.hasNext()) {
@@ -1227,6 +1233,12 @@ public class Menu {
 	private DistributionNetwork selectDistributionNetwork(Distributor distributor) {
 		List<DistributionNetwork> networks = distributor.getNetworks();
 		int index = 1;
+		
+		if(networks.size() == 0) {
+			System.out.println("There are no networks available");
+			System.out.println("Operation cancelled.");
+			return null;
+		}
 
 		System.out.println("Select the network");
 		for (int i = 0; i < networks.size(); ++i) {
@@ -1248,7 +1260,13 @@ public class Menu {
 	private DistributionLine selectDistributionLine(DistributionNetwork network) {
 		List<DistributionLine> lines = network.getLines();
 		int index = 1;
-
+		
+		if(lines.size() == 0) {
+			System.out.println("There are no lines available");
+			System.out.println("Operation cancelled.");
+			return null;
+		}
+		
 		System.out.println("Select the line");
 		for (int i = 0; i < lines.size(); ++i) {
 			System.out.println((i + 1) + ") " + lines.get(i).toString());
@@ -1270,7 +1288,13 @@ public class Menu {
 		int i = 0;
 		int index = 1;
 		Objects<Distributor> distributors = distributorControl.getDistributors();
-
+		
+		if(distributors.size() == 0) {
+			System.out.println("There are no distributors available");
+			System.out.println("Operation cancelled.");
+			return null;
+		}
+		
 		System.out.println("Select the distributor");
 		while (distributors.hasNext()) {
 			Distributor distributor = distributors.next();
