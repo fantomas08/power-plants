@@ -26,7 +26,8 @@ public class DistributorControl extends Control {
 	}
 
 	public void addLine(DistributionNetwork network) {
-		network.getLines().add(new DistributionLine(new ArrayList<ServiceZone>()));
+		int id = network.getLines().size() + 1;
+		network.getLines().add(new DistributionLine(id, new ArrayList<ServiceZone>()));
 		getOdb().store(network);
 	}
 

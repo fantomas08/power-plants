@@ -5,12 +5,10 @@ import java.util.List;
 public class DistributionLine {
 	
 	private int id;
-	private static int count;
 	private List<ServiceZone> zones;
 
-	public DistributionLine(List<ServiceZone> zones) {
-		++count;
-		this.id = count;
+	public DistributionLine(int id, List<ServiceZone> zones) {
+		this.id = id;
 		this.zones = zones;
 	}
 
