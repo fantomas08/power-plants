@@ -18,10 +18,6 @@ import entities.ThermalPlant;
 
 public class PlantControl extends Control {
 	
-	public PlantControl() {
-		
-	}
-	
 	public Objects<Object> getPlants(Class plantType) {
 		return getOdb().getObjects(plantType);
 	}
