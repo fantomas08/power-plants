@@ -1,0 +1,8 @@
+- El id de las lineas de distribución es secuencial globalmente, no para cada zona. Además, cuando se reinicia el programa, las nuevas lineas vuelven a empezar por 1.
+- Cuando se borra un distribuidor, se borran también las zonas asociadas a las lineas de ese distribuidor (en cascada).
+
+
+
+
+
+- Métodos de añadir objetos directamente en los menús en lugar de en las clases de control.
