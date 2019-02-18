@@ -898,7 +898,7 @@ public class Menu {
 		ArrayList<Distributor> distributors = plantControl.getSolarThermalDistributors();
 		int size = distributors.size();
 		if (size == 0) {
-			System.out.println("There are no zones with more lines than specified.");
+			System.out.println("There are no distributors with deliveries from solar/thermal plants.");
 			return;
 		}
 
