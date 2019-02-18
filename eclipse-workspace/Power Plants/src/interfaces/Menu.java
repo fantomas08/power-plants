@@ -726,7 +726,9 @@ public class Menu {
 			if (i == choice) {
 				plant = (Plant) objects.next();
 			}
-			objects.next();
+			if(objects.hasNext()) {
+				objects.next();
+			}
 			++i;
 		}
 		if (plant == null) {
@@ -766,6 +768,9 @@ public class Menu {
 		while (i <= choice && distributors.hasNext()) {
 			if (i == choice) {
 				distributor = distributors.next();
+			}
+			if(distributors.hasNext()) {
+				distributors.next();
 			}
 			++i;
 		}
@@ -1013,47 +1018,30 @@ public class Menu {
 
 	private void deleteNetwork(Distributor distributor) {
 		DistributionNetwork network = selectDistributionNetwork(distributor);
-
-		if (network == null) {
-			return;
-		}
+		if (network == null) return;
 		if (!network.getLines().isEmpty()) {
-			System.out.println("Atention! \nNetwork contain elements. Continue(y/n)");
+			System.out.println("Atention! \nNetwork contains elements. Continue(y/n)");
 			String option = scanner.nextLine();
-			while (!option.equals("y") && !option.equals("n")) {
-				System.out.println("Invalid option");
-			}
-			if (option.equals("y")) {
-				distributorControl.deleteNetwork(network, distributor);
-				System.out.println("Network deleted successfully");
-				return;
-			} else {
+			if(!option.toLowerCase().equals("y")) {
 				System.out.println("Operation cancelled");
 				return;
 			}
-		} else {
-			distributorControl.deleteNetwork(network, distributor);
-			System.out.println("Network deleted successfully");
-		}
+		} 
+		distributorControl.deleteNetwork(network, distributor);
+		System.out.println("Network deleted successfully");
 	}
 
 	private void deleteDistributor(Distributor distributor) {
 		if (!distributor.getNetworks().isEmpty()) {
 			System.out.println("Atention! \nDistributor contain elements. Continue(y/n)");
 			String option = scanner.nextLine();
-			while (!option.equals("y") && !option.equals("n")) {
-				System.out.println("Invalid option");
-			}
-			if (option.equals("y")) {
-				distributorControl.deleteDistributor(distributor);
-				System.out.println("Distributor deleted successfully");
-			} else {
+			if (!option.toLowerCase().equals("y")) {
 				System.out.println("Operation cancelled");
+				return;
 			}
-		} else {
-			distributorControl.deleteDistributor(distributor);
-			System.out.println("Distributor deleted successfully");
-		}
+		} 
+		distributorControl.deleteDistributor(distributor);
+		System.out.println("Distributor deleted successfully");
 	}
 
 	// add service zone

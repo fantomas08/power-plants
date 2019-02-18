@@ -32,21 +32,17 @@ public class DistributorControl extends Control {
 	}
 
 	public void deleteDistributor(Distributor distributor) {
-		for(DistributionNetwork network : distributor.getNetworks()) {
-			deleteNetwork(network);
-		}
 		getOdb().delete(distributor);
 	}
 
-	public void deleteNetwork(DistributionNetwork network) {
-		for(DistributionLine line : network.getLines()) {
-			deleteLine(line);
-		}
-		getOdb().delete(network);
+	public void deleteNetwork(DistributionNetwork network, Distributor distributor) {
+		distributor.getNetworks().remove(network);
+		getOdb().store(distributor);
 	}
 
-	public void deleteLine(DistributionLine line) {
-		getOdb().delete(line);
+	public void deleteLine(DistributionLine line, DistributionNetwork network) {
+		network.getLines().remove(line);
+		getOdb().store(network);
 	}
 	
 	public Objects<Distributor> getDistributors() {
