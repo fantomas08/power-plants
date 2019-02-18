@@ -726,6 +726,7 @@ public class Menu {
 			if (i == choice) {
 				plant = (Plant) objects.next();
 			}
+			objects.next();
 			++i;
 		}
 		if (plant == null) {
@@ -792,11 +793,7 @@ public class Menu {
 		}
 
 		Delivery delivery = new Delivery(quantity, date, distributor);
-		ArrayList<Delivery> deliveries = (ArrayList<Delivery>) plant.getDeliveries();
-		deliveries.add(delivery);
-		plant.setDeliveries(deliveries);
-		// TODO: NO FUNCIONA
-		System.out.println(plant.toString());
+		plant.getDeliveries().add(delivery);
 		plantControl.addPlant(plant);
 		System.out.println("Delivery added successfully!");
 	}
