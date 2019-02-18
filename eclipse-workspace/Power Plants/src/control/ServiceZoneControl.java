@@ -30,6 +30,7 @@ public class ServiceZoneControl extends Control {
 		getOdb().store(line);
 	}
 	
+	// Gets all the existing zones
 	public Objects<ServiceZone> getServiceZones() {
 		return getOdb().getObjects(ServiceZone.class);
 	}
@@ -71,6 +72,7 @@ public class ServiceZoneControl extends Control {
 		return zones;
 	}
 	
+	// Method that finds a zone with the specified name
 	public ServiceZone findServiceZone(String name) {
 		IQuery q = new CriteriaQuery(ServiceZone.class, Where.equal("name", name));
 		Objects<ServiceZone> zones = getOdb().getObjects(q);

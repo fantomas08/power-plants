@@ -39,12 +39,14 @@ public class DistributorControl extends Control {
 	public void deleteDistributor(Distributor distributor) {
 		getOdb().delete(distributor);
 	}
-
+	
+	// Deletes a network from a distributor
 	public void deleteNetwork(DistributionNetwork network, Distributor distributor) {
 		distributor.getNetworks().remove(network);
 		getOdb().store(distributor);
 	}
-
+	
+	// Deletes a line from a network
 	public void deleteLine(DistributionLine line, DistributionNetwork network) {
 		network.getLines().remove(line);
 		getOdb().store(network);
@@ -62,6 +64,7 @@ public class DistributorControl extends Control {
 		return getOdb().getObjects(DistributionLine.class);
 	}
 	
+	// Returns a distributor with the specified name
 	public Distributor findDistributor(String name) {
 		IQuery q = new CriteriaQuery(Distributor.class, Where.equal("name", name));
 		Objects<Distributor> distributors = getOdb().getObjects(q);
