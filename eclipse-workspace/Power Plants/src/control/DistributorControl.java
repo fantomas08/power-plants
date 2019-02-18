@@ -1,7 +1,6 @@
 package control;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.neodatis.odb.Objects;
 import org.neodatis.odb.core.query.IQuery;
