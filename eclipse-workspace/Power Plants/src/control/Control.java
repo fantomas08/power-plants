@@ -4,7 +4,7 @@ import org.neodatis.odb.ODB;
 import org.neodatis.odb.ODBFactory;
 
 public class Control {
-	private static final String ODB_NAME = "power_plants.neodatis";
+	private static final String ODB_NAME = "power_plants_test.neodatis";
 	private static ODB odb;
 	
 	public static ODB getOdb() {
