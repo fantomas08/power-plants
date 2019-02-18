@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.neodatis.odb.Objects;
-import org.neodatis.odb.core.query.IQuery;
-import org.neodatis.odb.core.query.criteria.Where;
-import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
 
 import control.Control;
 import control.DistributorControl;
