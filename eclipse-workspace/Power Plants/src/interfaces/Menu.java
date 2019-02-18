@@ -153,8 +153,8 @@ public class Menu {
 			System.out.println("Operation cancelled.");
 			return;
 		}
-		
-		if(plantControl.plantExists(name)) {
+
+		if (plantControl.plantExists(name)) {
 			System.out.println("A plant with that name already exists!");
 			System.out.println("Operation cancelled.");
 			return;
@@ -732,7 +732,7 @@ public class Menu {
 			System.out.println("---ERROR: Plant not found after choice!");
 			return;
 		}
-		
+
 		Objects<Distributor> distributors = distributorControl.getDistributors();
 		size = distributors.size();
 		if (size == 0) {
@@ -801,7 +801,7 @@ public class Menu {
 		System.out.println("Delivery added successfully!");
 	}
 	// END Add Delivery
-	
+
 	// START QUERIES
 	private void printSearchMenu() {
 		if (searchMenu == null) {
@@ -863,7 +863,7 @@ public class Menu {
 			System.out.println("");
 		}
 	}
-	
+
 	private void searchZonesNumLinesMenu() {
 		System.out.println("Type the minimum number of lines (not including): ");
 		int numLines;
@@ -891,7 +891,7 @@ public class Menu {
 			System.out.println("");
 		}
 	}
-	
+
 	private void searchDistributorsSolarThermalMenu() {
 		ArrayList<Distributor> distributors = plantControl.getSolarThermalDistributors();
 		int size = distributors.size();
@@ -905,7 +905,7 @@ public class Menu {
 			System.out.println("Name: " + current.getName());
 		}
 	}
-	
+
 	private void searchDeliveriesNuclearPlantsMenu() {
 		System.out.println("Type the vol. of produced waste (more than):");
 		double waste;
@@ -1003,34 +1003,38 @@ public class Menu {
 
 	private void deleteLine(Distributor distributor) {
 		DistributionNetwork network = selectDistributionNetwork(distributor);
-		if (network != null) {
-			DistributionLine line = selectDistributionLine(network);
-			if (line != null) {
-				distributorControl.deleteLine(line, network);
-				System.out.println("Line deleted successfully");
-			}
+		if (network == null) {
+			return;
 		}
+		DistributionLine line = selectDistributionLine(network);
+		if (line == null) {
+			return;
+		}
+		distributorControl.deleteLine(line, network);
+		System.out.println("Line deleted successfully");
 	}
 
 	private void deleteNetwork(Distributor distributor) {
 		DistributionNetwork network = selectDistributionNetwork(distributor);
 
-		if (network != null) {
-			if (!network.getLines().isEmpty()) {
-				System.out.println("Atention! \nNetwork contain elements. Continue(y/n)");
-				String option = scanner.nextLine();
-				while (!option.equals("y") && !option.equals("n")) {
-					System.out.println("Invalid option");
-				}
-				if (option.equals("y")) {
-					distributorControl.deleteNetwork(network, distributor);
-					System.out.println("Network deleted successfully");
-					return;
-				} else {
-					System.out.println("Operation cancelled");
-					return;
-				}
+		if (network == null) {
+			return;
+		}
+		if (!network.getLines().isEmpty()) {
+			System.out.println("Atention! \nNetwork contain elements. Continue(y/n)");
+			String option = scanner.nextLine();
+			while (!option.equals("y") && !option.equals("n")) {
+				System.out.println("Invalid option");
 			}
+			if (option.equals("y")) {
+				distributorControl.deleteNetwork(network, distributor);
+				System.out.println("Network deleted successfully");
+				return;
+			} else {
+				System.out.println("Operation cancelled");
+				return;
+			}
+		} else {
 			distributorControl.deleteNetwork(network, distributor);
 			System.out.println("Network deleted successfully");
 		}
@@ -1098,7 +1102,7 @@ public class Menu {
 	// update service zone
 	private void updateZoneMenu() {
 		ServiceZone zone = selectServiceZone();
-		
+
 		if (zone != null) {
 			System.out.println("1) Modify average consumption\n" + "2) Modify consumers number\n"
 					+ "3) Register new distribution line\n" + "4) Remove existing distribution line\n");
@@ -1154,55 +1158,54 @@ public class Menu {
 
 	private void registerDistributionLine(ServiceZone zone) {
 		Distributor distributor = selectDistributor();
-		if (distributor != null) {
-			DistributionNetwork network = selectDistributionNetwork(distributor);
-			if (network != null) {
-				DistributionLine line = selectDistributionLine(network);
-				if (line != null) {
-					if (!line.getZones().isEmpty()) {
-						for (ServiceZone z : line.getZones()) {
-							if (z.equals(zone)) {
-								System.out.println("This line already registered for that zone \nOperation cancelled");
-							} else {
-								serviceZoneControl.registerDistributionLine(zone, line);
-								System.out.println("Distribution line added");
-							}
-						}
-					} else {
-						serviceZoneControl.registerDistributionLine(zone, line);
-						System.out.println("Distribution line added");
-					}
-				}
+		if (distributor == null) {
+			return;
+		}
+		DistributionNetwork network = selectDistributionNetwork(distributor);
+		if (network == null) {
+			return;
+		}
+		DistributionLine line = selectDistributionLine(network);
+		if (line == null) {
+			return;
+		}
+		for (ServiceZone z : line.getZones()) {
+			if (z.equals(zone)) {
+				System.out.println("This line already registered for that zone \nOperation cancelled");
+				return;
 			}
 		}
+		serviceZoneControl.registerDistributionLine(zone, line);
+		System.out.println("Distribution line added");
 	}
 
 	private void removeDistributionLine(ServiceZone zone) {
 		Distributor distributor = selectDistributor();
-		if (distributor != null) {
-			DistributionNetwork network = selectDistributionNetwork(distributor);
-			if (network != null) {
-				DistributionLine line = selectDistributionLine(network);
-				if (line != null) {
-					if (!line.getZones().isEmpty()) {
-						for (ServiceZone z : line.getZones()) {
-							if (z.equals(zone)) {
-								serviceZoneControl.deleteDistributionLine(zone, line);
-								System.out.println("Distribution line removed");
-								return;
-							} else {
-								System.out.println("This line is not registered \nOperation cancelled");
-								return;
-							}
-						}
-					} else {
-						System.out.println("This line don't have any zone registered \nOperation cancelled");
-					}
-				}
+		if (distributor == null) {
+			return;
+		}
+		DistributionNetwork network = selectDistributionNetwork(distributor);
+		if (network == null) {
+			return;
+		}
+		DistributionLine line = selectDistributionLine(network);
+		if (line == null) {
+			return;
+		}
+		if (line.getZones().isEmpty()) {
+			System.out.println("This line don't have any zone registered \nOperation cancelled");
+			return;
+		}
+		for (ServiceZone z : line.getZones()) {
+			if (z.equals(zone)) {
+				serviceZoneControl.deleteDistributionLine(zone, line);
+				System.out.println("Distribution line removed");
+				return;
 			}
 		}
+		System.out.println("This line is not registered \nOperation cancelled");
 	}
-	
+
 	private ServiceZone selectServiceZone() {
 		int i = 0;
 		int index = 1;
